@@ -1,0 +1,6 @@
+node_modules/
+# ignore files in folder
+temp/*
+# but keep the folder
+!temp/.gitkeep
+
