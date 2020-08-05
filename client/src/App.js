@@ -49,11 +49,29 @@ function App() {
       const { videoId } = response;
       setImageUrl(videoId);      
       setIsLoading(false);
+      handleUpload(videoId);
     })
     .catch(error => {
       console.error('Error:', error);
       toast.dismiss();
       toast.warn('Something went wrong...'); 
+    });
+  }
+
+  const handleUpload = (filename) => {
+    const data = { filename };
+    fetch('/uploadImage', {
+      method:'POST',
+      body: JSON.stringify(data),
+      headers:{
+        'Content-Type': 'application/json'
+      }
+    }).then(res => res.json())
+    .then(response => { //console.log(response);
+      //const { created_at, secure_url } = response;
+    })
+    .catch(error => {
+      console.error('Error:', error);
     });
   }
 
