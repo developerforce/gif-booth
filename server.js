@@ -38,7 +38,8 @@ app.post('/video2gif', upload.none(), ({body}, res) => {
   const { videoUrl, videoId } = body;
   ffmpeg()
   .input(videoUrl)
-  .outputOption("-vf", "scale=320:-1:flags=lanczos,fps=15")
+  //.outputOption("-vf", "scale=320:-1:flags=lanczos,fps=15")
+  .outputOption("-vf", "fps=10,scale=320:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse")
   .on('end', () => {
     console.log('res: ', body);
     res.send(body);
