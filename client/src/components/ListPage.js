@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Container, CardImg, Button } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import StackGrid from "react-stack-grid";
+import download from 'downloadjs';
 
 const ListPage = () => {
 
@@ -48,7 +49,7 @@ const ListPage = () => {
 				>
 					<div>New GIF</div>
 				</Link>
-				{data.map(({ secure_url }, i) => <CardImg key={i} top width="100%" src={secure_url} alt="Card image cap" />)}
+				{data.map(({ secure_url }, i) => <CardImg key={i} style={{ cursor: 'pointer' }} onClick={()=>download(secure_url)} src={secure_url} alt="Card image cap" />)}
 				{token && <Button color="success" block className="" onClick={loadMore}>Load More</Button>}
 			</StackGrid>
     </Container>
