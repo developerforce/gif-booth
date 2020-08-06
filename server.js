@@ -1,6 +1,6 @@
 const express = require("express");
 const ffmpeg = require('fluent-ffmpeg');
-const cloudinary = require('./cloudinary');/*  console.log(cloudinary); */
+const cloudinary = require('./cloudinary');
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const multer = require('multer');
 const path = require('path');
@@ -16,7 +16,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 const storage = new CloudinaryStorage({
-  cloudinary: cloudinary,
+  cloudinary,
   params: {
     folder: 'video',
     format: async (req, file) => {
@@ -46,7 +46,10 @@ app.post('/uploadImage', ({body}, res) => {
 });
 
 app.get('/all-gifs', (req, res) => {
-  cloudinary.api.resources({ type: "upload" }, (err, result) => {
+  let params = { type: "upload", max_results: 12 };
+  const { next_cursor } = req.query;
+  if (next_cursor) params = { ...params, next_cursor };
+  cloudinary.api.resources(params, (err, result) => {
     if (err) console.log(err);
     res.send(result);
   });

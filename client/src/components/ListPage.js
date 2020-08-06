@@ -1,23 +1,38 @@
 import React, { useState, useEffect } from 'react';
-import { Container, CardImg } from 'reactstrap';
+import { Container, CardImg, Button } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import StackGrid from "react-stack-grid";
 
 const ListPage = () => {
 
 	const [data, setData] = useState([]);
+	const [token, setToken] = useState();
 
 	useEffect(() => {
     fetch('/all-gifs')
     .then(res => res.json())
 		.then(response => { //console.log(response);
-			const { resources } = response;
+			const { resources, next_cursor } = response;
 			setData(resources);
+			setToken(next_cursor);
     })
     .catch(error => {
       console.error('Error:', error);
     });
 	}, []);
+
+	const loadMore = () => {
+    fetch(`/all-gifs?next_cursor=${token}`)
+    .then(res => res.json())
+		.then(response => { //console.log(response);
+			const { resources, next_cursor } = response;
+			setData([ ...data, ...resources ]);
+			setToken(next_cursor);
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+  }
 	
 	return (
 		<Container fluid>
@@ -34,6 +49,7 @@ const ListPage = () => {
 					<div>New GIF</div>
 				</Link>
 				{data.map(({ secure_url }, i) => <CardImg key={i} top width="100%" src={secure_url} alt="Card image cap" />)}
+				{token && <Button color="success" block className="" onClick={loadMore}>Load More</Button>}
 			</StackGrid>
     </Container>
 	);
