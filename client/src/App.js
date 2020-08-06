@@ -7,6 +7,7 @@ import 'spinkit/css/spinkit.css';
 import download from 'downloadjs';
 import { ToastContainer, toast, Zoom } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Link } from 'react-router-dom';
 
 function App() {
   const placeholder = 'https://res.cloudinary.com/dzd5mddlm/video/upload/v1596551591/makegif/ef4wbnsn1iweckus7mpz.mp4';
@@ -46,6 +47,7 @@ function App() {
         setIsLoading(false);
         return toast.warn('Something went wrong...');
       }
+      setVideoUrl(null);
       const { videoId } = response;
       setImageUrl(videoId);      
       setIsLoading(false);
@@ -128,6 +130,12 @@ function App() {
               <VideoPlayer { ...videoJsOptions } />
             </Col>
             <Col xs="4">
+              <Link
+                to="/"
+                className="btn btn-link btn-lg btn-block mb-4"
+              >
+                <div>All GIFs</div>
+              </Link>
               <Form id="myform" encType="multipart/form-data" onSubmit={handleSubmit}>
                 <Row>
                   <Col xs="3">
@@ -139,7 +147,7 @@ function App() {
                     </FormGroup>
                   </Col>
                 </Row>
-                <Button type="submit" disabled={!videoUrl} block>Make GIF</Button>
+                <Button type="submit" disabled={!videoUrl} block className="mt-3">Make GIF</Button>
               </Form>
               {isLoading && <Row>
                 <Col sm="12" md={{ size: 6, offset: 3 }} className="text-center">
@@ -149,10 +157,10 @@ function App() {
                 </Col>
               </Row>}
               {imageUrl && <Col className="text-center">
-                <Button outline color="success" onClick={handleDownload}>
+                <Button outline color="success" onClick={handleDownload} className="mt-3">
                   <span className="fa fa-download fa-3x" title="Download GIF"></span>
                 </Button>
-                <CardImg top width="100%" src={`/img?filename=${imageUrl}&t${new Date()}`} alt="Card image cap" />
+                <CardImg top width="100%" src={`/img?filename=${imageUrl}&t${new Date()}`} alt="Card image cap" className="mt-3" />
               </Col>}
             </Col>
           </Row>

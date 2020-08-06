@@ -3,12 +3,14 @@ const ffmpeg = require('fluent-ffmpeg');
 const cloudinary = require('./cloudinary');/*  console.log(cloudinary); */
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const multer = require('multer');
+const path = require('path');
 const fs = require('fs');
 
 const app = express();
 app.set("port", process.env.PORT || 3001);
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static('client/build'));
+  app.get('/new-gif', (req, res) => res.sendFile(path.join(__dirname, 'client', 'build', 'index.html')));
 }
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -38,6 +40,13 @@ app.post('/uploadImage', ({body}, res) => {
   const { filename } = body;
   const path = `temp/${filename}.gif`;
   cloudinary.uploader.upload(path, (err, result) => {
+    if (err) console.log(err);
+    res.send(result);
+  });
+});
+
+app.get('/all-gifs', (req, res) => {
+  cloudinary.api.resources({ type: "upload" }, (err, result) => {
     if (err) console.log(err);
     res.send(result);
   });
