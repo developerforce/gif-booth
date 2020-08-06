@@ -88,12 +88,12 @@ function App() {
     fetch('/uploadVideo', {
       method:'POST',
       body: formData
-    }).then(res => res.json())
+    }).then(res => res.ok && res.json())
     .then(response => { //console.log(response);
       toast.dismiss();
-      if (!Object.keys(response).length) {
+      if (!response) {
         setIsLoading(false);
-        return toast.warn('Something went wrong...');
+        return toast.warn('Too large or unsupported video ...');
       }
       let { path, filename } = response;
       filename = filename.split('/').pop();
@@ -103,11 +103,6 @@ function App() {
       options.sources[0].src = path;
       setOptions(options);
       setVideoUrl({ path, filename });
-      setIsLoading(false);
-    })
-    .catch(error => { console.error('Error:', error);
-      toast.dismiss(); 
-      toast.warn('Too large or unsupported video ...');
       setIsLoading(false);
     });
   }
