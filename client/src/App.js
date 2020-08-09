@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Container, Row, Col, Input, Button, Form, FormGroup, Label, Card, CardImg } from 'reactstrap';
+import React, { useState, useEffect } from 'react';
+import { Container, Row, Col, /* Input, */ Button, Form, /* FormGroup, Label, */ Card, CardImg } from 'reactstrap';
 import VideoPlayer from './components/VideoPlayer';
 //import '../App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -8,33 +8,39 @@ import download from 'downloadjs';
 import { ToastContainer, toast, Zoom } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Link } from 'react-router-dom';
+import Webcam from './components/WebcamCapture';
 
 function App() {
-  const placeholder = 'https://res.cloudinary.com/dzd5mddlm/video/upload/v1596551591/makegif/ef4wbnsn1iweckus7mpz.mp4';
-  const makePoster = (path) => `${path.substring(0, path.lastIndexOf('.'))}.png`;
-
   const [videoJsOptions, setOptions] = useState({
     autoplay: false,
     controls: true,
     aspectRatio: '16:9',
     preload: 'auto',
-    poster: makePoster(placeholder),
+    poster: '/poster?filename=placeholder.png',
     sources: [{
-      src: placeholder,
-      type: 'video/mp4'
+      src: '/video?filename=placeholder.webm',
+      type: 'video/webm'
     }]
   });
   const [isLoading, setIsLoading] = useState(false);
-  const [videoUrl, setVideoUrl] = useState();
-  const [imageUrl, setImageUrl] = useState();
+  const [videoId, setVideoId] = useState();
+  const [imageUrl, setImageUrl] = useState(); //console.log(imageUrl);
+  
+  useEffect(() => {
+    if (videoId === null) {
+      const options = videoJsOptions;
+      options.poster = '/poster?filename=placeholder.png';
+      options.sources[0].src = '/video?filename=placeholder.webm';
+      setOptions(options);
+    }
+  }, [videoId, videoJsOptions]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
     let formData = new FormData();
-    if (!videoUrl) return toast.warn('Video is required!');
-    formData.append('videoUrl', videoUrl.path);
-    formData.append('videoId', videoUrl.filename);
+    if (!videoId) return toast.warn('Video is required!');
+    formData.append('videoId', videoId);
     setIsLoading(true);
     toast.info('Please be patient...');
     fetch('/video2gif', {
@@ -47,7 +53,7 @@ function App() {
         setIsLoading(false);
         return toast.warn('Something went wrong...');
       }
-      setVideoUrl(null);
+      setVideoId(null);
       const { videoId } = response;
       setImageUrl(videoId);      
       setIsLoading(false);
@@ -70,22 +76,19 @@ function App() {
       }
     }).then(res => res.json())
     .then(response => { //console.log(response);
-      //const { created_at, secure_url } = response;
     })
     .catch(error => {
       console.error('Error:', error);
     });
   }
 
-  const handleFileInput = (e) => {
-    const files = e.currentTarget.files;
-    const file = files[0]; //console.log(file);
-    if (!file) return;
+  const handleStopCapture = (blob) => { //console.log(blob);
+    if (!blob) return;
     setIsLoading(true);
     toast.info('Please be patient...');
     let formData = new FormData();    
-    formData.append('video', file);
-    fetch('/uploadVideo', {
+    formData.append('video', blob);
+    fetch('/uploadBlob', {
       method:'POST',
       body: formData
     }).then(res => res.ok && res.json())
@@ -93,16 +96,16 @@ function App() {
       toast.dismiss();
       if (!response) {
         setIsLoading(false);
-        return toast.warn('Too large or unsupported video ...');
+        return toast.warn('Too large video ...');
       }
-      let { path, filename } = response;
-      filename = filename.split('/').pop();
+      const { filename } = response; //console.log(filename);
       const options = videoJsOptions;
-      const video_thumbnail = makePoster(path);
-      options.poster=`${video_thumbnail}`;
-      options.sources[0].src = path;
+      const src = `/video?filename=${filename}`;
+      const videoId = filename.replace('.webm', '');
+      options.poster = `/poster?filename=${videoId}.png`;
+      options.sources[0].src = src;
       setOptions(options);
-      setVideoUrl({ path, filename });
+      setVideoId(videoId);
       setIsLoading(false);
     });
   }
@@ -110,7 +113,7 @@ function App() {
   const handleDownload = async () => {
     const res = await fetch(`/download?filename=${imageUrl}`); //console.log(res);
     const fileBlob = res.blob(); //console.log(fileBlob);
-    fileBlob.then((res) => { console.log(res);
+    fileBlob.then((res) => { //console.log(res);
       download(res, `${imageUrl}.gif`);
       setImageUrl(null);
     });
@@ -131,18 +134,15 @@ function App() {
               >
                 <div>All GIFs</div>
               </Link>
+              {imageUrl ? <Col className="text-center">
+                <Button outline color="success" onClick={handleDownload} className="mt-3">
+                  <span className="fa fa-download fa-3x" title="Download GIF"></span>
+                </Button>
+                <CardImg top width="100%" src={`/img?filename=${imageUrl}`} alt="Card image cap" className="mt-3" />
+              </Col>
+              : <Webcam handleStopCapture={handleStopCapture} />}
               <Form id="myform" encType="multipart/form-data" onSubmit={handleSubmit}>
-                <Row>
-                  <Col xs="3">
-                    <Label size="sm">Video</Label>
-                  </Col>
-                  <Col xs="9">
-                    <FormGroup>
-                      <Input type="file" accept="video/*" onChange={handleFileInput} className="" />
-                    </FormGroup>
-                  </Col>
-                </Row>
-                <Button type="submit" disabled={!videoUrl} block className="mt-3">Make GIF</Button>
+                <Button type="submit" outline={!videoId} disabled={!videoId} block className="mt-3">Make GIF</Button>
               </Form>
               {isLoading && <Row>
                 <Col sm="12" md={{ size: 6, offset: 3 }} className="text-center">
@@ -151,12 +151,6 @@ function App() {
                   </div>
                 </Col>
               </Row>}
-              {imageUrl && <Col className="text-center">
-                <Button outline color="success" onClick={handleDownload} className="mt-3">
-                  <span className="fa fa-download fa-3x" title="Download GIF"></span>
-                </Button>
-                <CardImg top width="100%" src={`/img?filename=${imageUrl}&t${new Date()}`} alt="Card image cap" className="mt-3" />
-              </Col>}
             </Col>
           </Row>
         </Card>

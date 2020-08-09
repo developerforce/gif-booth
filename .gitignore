@@ -3,4 +3,9 @@ node_modules/
 temp/*
 # but keep the folder
 !temp/.gitkeep
+# ignore files in folder
+uploads/*
+# except
+!uploads/placeholder.png
+!uploads/placeholder.webm
 

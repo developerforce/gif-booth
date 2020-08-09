@@ -17,7 +17,7 @@ class VideoPlayer extends React.Component {
     this.player.posterImage.setSrc(this.props.poster);
     this.player.src({
       src,
-      type: 'video/mp4',
+      type: 'video/webm',
     });
     this.player.load();
   }
