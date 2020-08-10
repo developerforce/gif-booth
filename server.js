@@ -1,10 +1,17 @@
 const express = require("express");
 const ffmpeg = require('fluent-ffmpeg');
-const cloudinary = require('./cloudinary');
-const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const AWS = require('aws-sdk');
+
+if (process.env.NODE_ENV !== 'production') require('dotenv').config();
+
+const s3  = new AWS.S3({
+  accessKeyId: process.env.BUCKETEER_AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.BUCKETEER_AWS_SECRET_ACCESS_KEY,
+  region: 'us-east-1',
+});
 
 const app = express();
 app.set("port", process.env.PORT || 3001);
@@ -15,54 +22,49 @@ if (process.env.NODE_ENV === 'production') {
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-const storage = new CloudinaryStorage({
-  cloudinary,
-  params: {
-    folder: 'video',
-    format: async (req, file) => {
-      const on = file.originalname.split('.');
-      const format = on[on.length - 1];
-      return format;
-    },
-    resource_type: 'video',
-    transformation: [
-      { duration: 3.0 }
-    ]
-  },
-});
-const upload = multer({ storage });
-
-const storage2 = multer.diskStorage({ 
+const storage = multer.diskStorage({ 
   destination: (req, file, cb) => {
     cb(null, './uploads/')
   },
-  filename: (req, file, cb) => { //console.log(file);
+  filename: (req, file, cb) => {
     const filename = `${Date.now()}.webm`;
     cb(null, filename)
   }
 });
-const upload2 = multer({ storage: storage2 });
-
-app.post('/uploadVideo', upload.single('video'), ({file}, res) => {
-  res.send(file);
-});
+const upload = multer({ storage });
 
 app.post('/uploadImage', ({body}, res) => {
   const { filename } = body;
   const path = `temp/${filename}.gif`;
-  cloudinary.uploader.upload(path, (err, result) => {
-    if (err) console.log(err);
-    res.send(result);
+  const fileStream = fs.createReadStream(path);
+  const params = {
+    Key: `${filename}.gif`,
+    Bucket: process.env.BUCKETEER_BUCKET_NAME,
+    Body: fileStream,
+    ContentType: 'image/gif',
+    ACL: 'public-read'
+  };
+  
+  s3.upload(params, (err, data) => {
+    if (err) {
+      console.log(err, err.stack);
+      return;
+    } else {
+      console.log("s3.upload", data);
+    }
   });
 });
 
 app.get('/all-gifs', (req, res) => {
-  let params = { type: "upload", max_results: 12 };
-  const { next_cursor } = req.query;
-  if (next_cursor) params = { ...params, next_cursor };
-  cloudinary.api.resources(params, (err, result) => {
-    if (err) console.log(err);
-    res.send(result);
+  const params = {
+    Bucket : process.env.BUCKETEER_BUCKET_NAME
+  };
+  s3.listObjects(params, (err, result) => {
+    if (err) {
+      console.log("Error", err);
+    } else {
+      res.send(result);
+    }
   });
 });
 
@@ -83,7 +85,7 @@ app.post('/video2gif', upload.none(), ({body}, res) => {
   .save(`temp/${videoId}.gif`);
 });
 
-app.post('/uploadBlob', upload2.single('video'), ({file}, res) => { //console.log('file: ', file);
+app.post('/uploadBlob', upload.single('video'), ({file}, res) => {
   const filename = file.path.replace('webm', 'png');
   ffmpeg(file.path)
   .screenshots({
@@ -91,18 +93,18 @@ app.post('/uploadBlob', upload2.single('video'), ({file}, res) => { //console.lo
     filename,
     size: '320x240'
   })
-  .on('end', () => { //console.log('Screenshot taken');
+  .on('end', () => {
     res.send(file);
   });
 });
 
-app.get('/video', (req, res) => { //console.log('body: ', req.body);
+app.get('/video', (req, res) => {
   const { filename } = req.query;
-  const path = `uploads/${filename}`; //console.log('path: ', path);
+  const path = `uploads/${filename}`;
   const stat = fs.statSync(path);
   const fileSize = stat.size;
   const range = req.headers.range;
-  if (range) { //console.log('range: ', range);
+  if (range) {
     const parts = range.replace(/bytes=/, "").split("-");
     const start = parseInt(parts[0], 10);
     const end = parts[1]
@@ -164,6 +166,32 @@ app.get('/download', (req, res) => {
     if (err) console.log(err);
     console.log('Your file has been downloaded!');
     fs.unlink(path, () => console.log("File was deleted"));
+  });
+});
+
+app.get('/s3-download', async (req, res) => {
+  const { filename } = req.query;
+  const params = {
+    Bucket : process.env.BUCKETEER_BUCKET_NAME,
+    Key: filename
+  };
+  s3.getObject(params, (err, data) => {
+    if (err) console.log(err, err.stack);
+    else { console.log("get file", data);
+      res.send(data.Body)
+    }
+  });
+});
+
+app.delete('/deleteObj', ({body}, res) => {
+  const { filename } = body;
+  const params = {
+    Bucket : process.env.BUCKETEER_BUCKET_NAME,
+    Key: filename
+  };
+  s3.deleteObject(params, (err, data) => {
+    if (err) console.log(err, err.stack);
+    else res.send(data);
   });
 });
 

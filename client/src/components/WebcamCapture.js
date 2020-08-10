@@ -1,14 +1,15 @@
-import React, { useEffect } from 'react';
-import { Button } from 'reactstrap';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { Button, Toast, ToastHeader } from 'reactstrap';
 import Webcam from "react-webcam";
 
 const WebcamStreamCapture = ({ handleStopCapture }) => {
-  const webcamRef = React.useRef(null);
-  const mediaRecorderRef = React.useRef(null);
-  const [capturing, setCapturing] = React.useState(false);
-  const [recordedChunks, setRecordedChunks] = React.useState([]);
+  const webcamRef = useRef(null);
+  const mediaRecorderRef = useRef(null);
+  const [capturing, setCapturing] = useState(false);
+  const [errMsg, setErrMsg] = useState();
+  const [recordedChunks, setRecordedChunks] = useState([]);
   
-  const handleDataAvailable = React.useCallback(
+  const handleDataAvailable = useCallback(
     ({ data }) => {
       if (data.size > 0) {
         setRecordedChunks((prev) => prev.concat(data));
@@ -17,19 +18,25 @@ const WebcamStreamCapture = ({ handleStopCapture }) => {
     [setRecordedChunks]
   );
 
-  const handleStartCaptureClick = React.useCallback(() => {
-    setCapturing(true);
-    mediaRecorderRef.current = new MediaRecorder(webcamRef.current.stream, {
-      mimeType: "video/webm"
-    });
-    mediaRecorderRef.current.addEventListener(
-      "dataavailable",
-      handleDataAvailable
-    );
-    mediaRecorderRef.current.start();
-  }, [webcamRef, setCapturing, mediaRecorderRef, handleDataAvailable]);
+  const handleStartCaptureClick = useCallback(() => {
+    var constraints = {
+      video: true,
+      audio: false
+    }
+    navigator.mediaDevices.getUserMedia(constraints).then(function success(stream) {
+      setCapturing(true);
+      mediaRecorderRef.current = new MediaRecorder(webcamRef.current.stream, {
+        mimeType: "video/webm"
+      }); //console.log(mediaRecorderRef);
+      mediaRecorderRef.current.addEventListener(
+        "dataavailable",
+        handleDataAvailable
+      );
+      mediaRecorderRef.current.start();
+    }).catch(err => setErrMsg(err.toString()));
+  }, [webcamRef, setCapturing, mediaRecorderRef, handleDataAvailable/* , handleError */]);
 
-  const handleStopCaptureClick = React.useCallback(() => {
+  const handleStopCaptureClick = useCallback(() => {
     mediaRecorderRef.current.stop();
     setCapturing(false);
   }, [mediaRecorderRef, setCapturing]);
@@ -47,6 +54,9 @@ const WebcamStreamCapture = ({ handleStopCapture }) => {
   return (
     <>
       <Webcam audio={false} ref={webcamRef} />
+      {errMsg && <Toast>
+        <ToastHeader icon="danger">{errMsg}</ToastHeader>
+      </Toast>}
       <Button
         outline
         block
