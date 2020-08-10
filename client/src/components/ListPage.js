@@ -49,7 +49,7 @@ const ListPage = () => {
 	return (
 		<Container fluid>
 			<StackGrid
-				columnWidth={250}
+				columnWidth={140}
 				monitorImagesLoaded={true}
 				gutterWidth={15}
 				gutterHeight={15}
