@@ -44,7 +44,7 @@ function App() {
     if (!videoId) return toast.warn('Video is required!');
     const text = e.target.text.value;
     const line = longestLine(text);
-    const fontsize = 400/line.length;
+    const fontsize = line.length && 400/line.length;
     formData.append('text', `${text}`);
     formData.append('fontsize', fontsize);
     formData.append('videoId', videoId);
