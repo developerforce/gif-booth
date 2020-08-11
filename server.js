@@ -69,11 +69,26 @@ app.get('/all-gifs', (req, res) => {
 });
 
 app.post('/video2gif', upload.none(), ({body}, res) => {
-  const { videoId } = body;
+  const { videoId, text, fontsize } = body; //console.log(text);
   ffmpeg()
   .input(`uploads/${videoId}.webm`)
-  .outputOption("-vf", "scale=320:-1:flags=lanczos,fps=15")
-  //.outputOption("-vf", "fps=10,scale=320:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse") //better quality, bigger file
+  .complexFilter([
+    "scale=320:-1:flags=lanczos,fps=15[a]",
+    {
+      filter: 'drawtext',
+      options: {
+        text: text.replace(/\r?\n|\r/gm, "\v"),
+        fontsize,
+        fontcolor: 'white',
+        x: '(w-text_w)/2',
+        y: '(h-text_h)*.9',
+        shadowcolor: 'black',
+        shadowx: 2,
+        shadowy: 2
+      },
+      inputs: 'a'
+    }
+  ])
   .on('end', () => {
     //console.log('res: ', body);
     res.send(body);

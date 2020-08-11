@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, /* Input, */ Button, Form, /* FormGroup, Label, */ Card, CardImg } from 'reactstrap';
+import { Container, Row, Col, Input, Button, Form, FormGroup, Label, Card, CardImg } from 'reactstrap';
 import VideoPlayer from './components/VideoPlayer';
 //import '../App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -35,11 +35,18 @@ function App() {
     }
   }, [videoId, videoJsOptions]);
 
+  const longestLine = (string) => string.split('\n').reduce((a, b) => a.length > b.length ? a : b, '');
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
     let formData = new FormData();
     if (!videoId) return toast.warn('Video is required!');
+    const text = e.target.text.value;
+    const line = longestLine(text);
+    const fontsize = 400/line.length;
+    formData.append('text', `${text}`);
+    formData.append('fontsize', fontsize);
     formData.append('videoId', videoId);
     setIsLoading(true);
     toast.info('Please be patient...');
@@ -141,7 +148,13 @@ function App() {
                 <CardImg top width="100%" src={`/img?filename=${imageUrl}`} alt="Card image cap" className="mt-3" />
               </Col>
               : <Webcam handleStopCapture={handleStopCapture} />}
-              <Form id="myform" encType="multipart/form-data" onSubmit={handleSubmit}>
+              <Form id="myform" onSubmit={handleSubmit}>
+                <FormGroup>
+                  <Label size="sm">Text</Label>
+                  <Input type="textarea" name="text" rows={3}
+                  disabled={!videoId} style={{ fontSize: 'x-large' }} placeholder={`Add text to GIF
+                  press "Enter" to break lines`} />
+                </FormGroup>
                 <Button type="submit" outline={!videoId} disabled={!videoId} block className="mt-3">Make GIF</Button>
               </Form>
               {isLoading && <Row>
