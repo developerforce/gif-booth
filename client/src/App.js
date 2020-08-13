@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Input, Button, Form, FormGroup, Label, Card, CardImg } from 'reactstrap';
+import { Container, Row, Col, Input, Button, ButtonGroup, Form, FormGroup, Label, Card, CardImg } from 'reactstrap';
 import VideoPlayer from './components/VideoPlayer';
 //import '../App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -10,7 +10,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Link } from 'react-router-dom';
 import Webcam from './components/WebcamCapture';
 
-function App() {
+function App(props) { //console.log(props);
   const [videoJsOptions, setOptions] = useState({
     autoplay: false,
     controls: true,
@@ -41,7 +41,6 @@ function App() {
     e.preventDefault();
 
     let formData = new FormData();
-    if (!videoId) return toast.warn('Video is required!');
     const text = e.target.text.value;
     const line = longestLine(text);
     const fontsize = line.length && 400/line.length;
@@ -64,7 +63,6 @@ function App() {
       const { videoId } = response;
       setImageUrl(videoId);      
       setIsLoading(false);
-      handleUpload(videoId);
     })
     .catch(error => {
       console.error('Error:', error);
@@ -82,7 +80,8 @@ function App() {
         'Content-Type': 'application/json'
       }
     }).then(res => res.json())
-    .then(response => { //console.log(response);
+    .then(response => { console.log(response);
+      props.history.push('/')
     })
     .catch(error => {
       console.error('Error:', error);
@@ -122,7 +121,7 @@ function App() {
     const fileBlob = res.blob(); //console.log(fileBlob);
     fileBlob.then((res) => { //console.log(res);
       download(res, `${imageUrl}.gif`);
-      setImageUrl(null);
+      //setImageUrl(null);
     });
   }
 
@@ -142,9 +141,13 @@ function App() {
                 <div>All GIFs</div>
               </Link>
               {imageUrl ? <Col className="text-center">
-                <Button outline color="success" onClick={handleDownload} className="mt-3">
-                  <span className="fa fa-download fa-3x" title="Download GIF"></span>
-                </Button>
+                <ButtonGroup className="mt-3">
+                  <Button color="success"onClick={()=>handleUpload(imageUrl)}>Save to grid</Button>
+                  <Button outline color="info" onClick={handleDownload}>
+                    <span className="fa fa-download fa-3x" title="Download GIF"></span>
+                  </Button>
+                  <Button color="primary" onClick={()=>setImageUrl(null)}>Start over</Button>
+                </ButtonGroup>
                 <CardImg top width="100%" src={`/img?filename=${imageUrl}`} alt="Card image cap" className="mt-3" />
               </Col>
               : <Webcam handleStopCapture={handleStopCapture} />}

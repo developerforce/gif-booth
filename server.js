@@ -34,7 +34,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 app.post('/uploadImage', ({body}, res) => {
-  const { filename } = body;
+  const { filename } = body; console.log('filename', filename);
   const path = `temp/${filename}.gif`;
   const fileStream = fs.createReadStream(path);
   const params = {
@@ -51,6 +51,10 @@ app.post('/uploadImage', ({body}, res) => {
       return;
     } else {
       console.log("s3.upload", data);
+      fs.unlink(`uploads/${filename}.webm`, () => console.log("File was deleted"));
+      fs.unlink(`uploads/${filename}.png`, () => console.log("File was deleted"));
+      fs.unlink(path, () => console.log("File was deleted"));
+      res.send(data);
     }
   });
 });
@@ -183,7 +187,6 @@ app.get('/download', (req, res) => {
   res.download(path, (err) => {  
     if (err) console.log(err);
     console.log('Your file has been downloaded!');
-    fs.unlink(path, () => console.log("File was deleted"));
   });
 });
 

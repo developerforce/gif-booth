@@ -34,7 +34,7 @@ const WebcamStreamCapture = ({ handleStopCapture }) => {
       );
       mediaRecorderRef.current.start();
     }).catch(err => setErrMsg(err.toString()));
-  }, [webcamRef, setCapturing, mediaRecorderRef, handleDataAvailable/* , handleError */]);
+  }, [webcamRef, setCapturing, mediaRecorderRef, handleDataAvailable]);
 
   const handleStopCaptureClick = useCallback(() => {
     mediaRecorderRef.current.stop();

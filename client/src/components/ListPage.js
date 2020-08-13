@@ -16,7 +16,7 @@ const ListPage = () => {
 	const handleDownload = async (filename) => {
     const res = await fetch(`/s3-download?filename=${filename}`); //console.log(res);
     const fileBlob = res.blob(); //console.log(fileBlob);
-    fileBlob.then((res) => download(res, `${filename}.gif`));
+    fileBlob.then((res) => download(res, filename));
 	}
 	
 	const deleteObj = (filename) => {
