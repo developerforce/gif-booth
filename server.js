@@ -72,21 +72,24 @@ app.post('/video2gif', upload.none(), ({body}, res) => {
   const { videoId, text, fontsize } = body; //console.log(text);
   ffmpeg()
   .input(`uploads/${videoId}.webm`)
+  .input('uploads/CascadiaJS.png')
   .complexFilter([
-    "scale=320:-1:flags=lanczos,fps=15[a]",
+    "[1]scale=iw*.2:-1[a]",
+    "[0][a]overlay=(main_w-overlay_w-520)/2:(main_h-overlay_h-350)/2[b]",
+    "[b]scale=320:-1:flags=lanczos,fps=15[c]",
     {
       filter: 'drawtext',
       options: {
         text: text.replace(/\r?\n|\r/gm, "\v"),
-        fontsize,
+        fontsize: fontsize*.7,
         fontcolor: 'white',
         x: '(w-text_w)/2',
-        y: '(h-text_h)*.9',
+        y: '(h-text_h)*.95',
         shadowcolor: 'black',
         shadowx: 2,
         shadowy: 2
       },
-      inputs: 'a'
+      inputs: 'c'
     }
   ])
   .on('end', () => {
