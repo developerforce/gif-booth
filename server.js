@@ -79,7 +79,7 @@ app.post('/video2gif', upload.none(), ({body}, res) => {
   .input('uploads/CascadiaJS.png')
   .complexFilter([
     "[1]scale=iw*.2:-1[a]",
-    "[0][a]overlay=(main_w-overlay_w-520)/2:(main_h-overlay_h-350)/2[b]",
+    "[0][a]overlay=x=20:y=15[b]",
     "[b]scale=320:-1:flags=lanczos,fps=15[c]",
     {
       filter: 'drawtext',
