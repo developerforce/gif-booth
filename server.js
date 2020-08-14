@@ -51,9 +51,9 @@ app.post('/uploadImage', ({body}, res) => {
       return;
     } else {
       console.log("s3.upload", data);
-      fs.unlink(`uploads/${filename}.webm`, () => console.log("File was deleted"));
-      fs.unlink(`uploads/${filename}.png`, () => console.log("File was deleted"));
-      fs.unlink(path, () => console.log("File was deleted"));
+      fs.unlink(`uploads/${filename}.webm`, () => console.log(".webm file was deleted"));
+      fs.unlink(`uploads/${filename}.png`, () => console.log(".png file was deleted"));
+      fs.unlink(path, () => console.log(".gif file was deleted"));
       res.send(data);
     }
   });
@@ -85,7 +85,7 @@ app.post('/video2gif', upload.none(), ({body}, res) => {
       filter: 'drawtext',
       options: {
         text: text.replace(/\r?\n|\r/gm, "\v"),
-        fontsize: fontsize*.7,
+        fontsize,
         fontcolor: 'white',
         x: '(w-text_w)/2',
         y: '(h-text_h)*.95',

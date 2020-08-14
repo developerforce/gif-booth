@@ -39,15 +39,12 @@ function App(props) { //console.log(props);
     }
   }, [videoId, videoJsOptions]);
 
-  const longestLine = (string) => string.split('\n').reduce((a, b) => a.length > b.length ? a : b, '');
-
   const handleSubmit = (e) => {
     e.preventDefault();
 
     let formData = new FormData();
     const text = e.target.text.value;
-    const line = longestLine(text);
-    const fontsize = line.length && 400/line.length;
+    const fontsize = text.length && 340/text.length;
     formData.append('text', `${text}`);
     formData.append('fontsize', fontsize);
     formData.append('videoId', videoId);
@@ -159,9 +156,8 @@ function App(props) { //console.log(props);
               <Form id="myform" onSubmit={handleSubmit}>
                 <FormGroup>
                   <Label size="sm">Text</Label>
-                  <Input type="textarea" name="text" rows={3}
-                  disabled={!videoId} style={{ fontSize: 'x-large' }} placeholder={`Add text to GIF
-                  press "Enter" to break lines`} />
+                  <Input type="textarea" name="text" rows={2} maxlength={64}
+                  disabled={!videoId} style={{ fontSize: 'xx-large' }} placeholder="Add text to GIF&#13;Max 64 characters" />
                 </FormGroup>
                 <Button type="submit" outline={!videoId} disabled={!videoId} block className="mt-3">Make GIF</Button>
               </Form>
