@@ -1,5 +1,4 @@
 .trash { 
-  /* visibility: hidden; */
   position: absolute;
   top: 20px;
   right: 20px;
@@ -14,3 +13,24 @@
 }
 .trash:after { font-family: 'FontAwesome'; content: "\f00d"; color: #909090; }
 .trash:hover { background-color: #900; }
+
+.timer-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.timer {
+  font-family: "Montserrat";
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.timer-text {
+  color: #aaa;
+}
+
+.timer-value {
+  font-size: 40px;
+}

@@ -9,6 +9,8 @@ import { ToastContainer, toast, Zoom } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Link } from 'react-router-dom';
 import Webcam from './components/WebcamCapture';
+import Countdown from './components/Countdown';
+import Timer from './components/Timer';
 
 function App(props) { //console.log(props);
   const [videoJsOptions, setOptions] = useState({
@@ -24,7 +26,9 @@ function App(props) { //console.log(props);
   });
   const [isLoading, setIsLoading] = useState(false);
   const [videoId, setVideoId] = useState();
-  const [imageUrl, setImageUrl] = useState(); //console.log(imageUrl);
+  const [imageUrl, setImageUrl] = useState();
+  const [isCountdownPlaying, setIsCountdownPlaying] = useState(false);
+  const [isTimerPlaying, setIsTimerPlaying] = useState(false);
   
   useEffect(() => {
     if (videoId === null) {
@@ -121,7 +125,6 @@ function App(props) { //console.log(props);
     const fileBlob = res.blob(); //console.log(fileBlob);
     fileBlob.then((res) => { //console.log(res);
       download(res, `${imageUrl}.gif`);
-      //setImageUrl(null);
     });
   }
 
@@ -150,7 +153,9 @@ function App(props) { //console.log(props);
                 </ButtonGroup>
                 <CardImg top width="100%" src={`/img?filename=${imageUrl}`} alt="Card image cap" className="mt-3" />
               </Col>
-              : <Webcam handleStopCapture={handleStopCapture} />}
+              : <Webcam handleStopCapture={handleStopCapture} isPlaying={isTimerPlaying} setIsPlaying={setIsCountdownPlaying} />}
+              {isCountdownPlaying && <Countdown isPlaying={isCountdownPlaying} setIsCountdownPlaying={setIsCountdownPlaying} setIsTimerPlaying={setIsTimerPlaying} />}
+              {isTimerPlaying && <Timer isPlaying={isTimerPlaying} setIsPlaying={setIsTimerPlaying} />}
               <Form id="myform" onSubmit={handleSubmit}>
                 <FormGroup>
                   <Label size="sm">Text</Label>

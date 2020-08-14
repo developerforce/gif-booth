@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Button, Toast, ToastHeader } from 'reactstrap';
 import Webcam from "react-webcam";
 
-const WebcamStreamCapture = ({ handleStopCapture }) => {
+const WebcamStreamCapture = ({ handleStopCapture, isPlaying, setIsPlaying }) => {
   const webcamRef = useRef(null);
   const mediaRecorderRef = useRef(null);
   const [capturing, setCapturing] = useState(false);
@@ -18,7 +18,7 @@ const WebcamStreamCapture = ({ handleStopCapture }) => {
     [setRecordedChunks]
   );
 
-  const handleStartCaptureClick = useCallback(() => {
+  const handleStartCapture = useCallback(() => {
     var constraints = {
       video: true,
       audio: false
@@ -51,20 +51,29 @@ const WebcamStreamCapture = ({ handleStopCapture }) => {
     }
   }, [recordedChunks, handleStopCapture]);
 
+  useEffect(() => { //console.log(`isPlaying: ${isPlaying}`);
+    if (isPlaying) handleStartCapture();
+    if (!isPlaying && capturing) handleStopCaptureClick();
+  }, [isPlaying, capturing, handleStartCapture, handleStopCaptureClick]);
+  
+  const handleStartCaptureClick = () => {
+    setIsPlaying(true);
+  }
+
   return (
     <>
       <Webcam audio={false} ref={webcamRef} />
       {errMsg && <Toast>
         <ToastHeader icon="danger">{errMsg}</ToastHeader>
       </Toast>}
-      <Button
+      {!isPlaying && <Button
         outline
         block
-        color={capturing ? "success" : "primary"}
-        onClick={capturing ? handleStopCaptureClick : handleStartCaptureClick}
+        color="primary"
+        onClick={handleStartCaptureClick}
       >
-        {capturing ? "Stop" : "Start"} Capture
-      </Button>
+        Start Recording
+      </Button>}
     </>
   );
 };

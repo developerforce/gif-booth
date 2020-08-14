@@ -34,7 +34,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 app.post('/uploadImage', ({body}, res) => {
-  const { filename } = body; console.log('filename', filename);
+  const { filename } = body; //console.log('filename', filename);
   const path = `temp/${filename}.gif`;
   const fileStream = fs.createReadStream(path);
   const params = {
