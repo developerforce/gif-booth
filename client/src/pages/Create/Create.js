@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import 'spinkit/css/spinkit.css';
 import download from 'downloadjs';
 import { ToastContainer, toast, Zoom } from 'react-toastify';
@@ -34,21 +34,17 @@ function Create({ history }) {
 
   const [phase, setPhase] = useState(PHASE_START);
 
-  const [isLoading, setIsLoading] = useState(false);
   const [videoId, setVideoId] = useState();
   const [imageUrl, setImageUrl] = useState();
+  const [text, setText] = useState('');
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
+  const handleSubmit = () => {
     let formData = new FormData();
-    const text = e.target.text.value;
+    const text = ''; // e.target.text.value;
     const fontsize = text.length && 340 / text.length;
     formData.append('text', `${text}`);
     formData.append('fontsize', fontsize);
     formData.append('videoId', videoId);
-    setIsLoading(true);
-    toast.info('Please be patient...');
     fetch('/video2gif', {
       method: 'POST',
       body: formData,
@@ -57,13 +53,11 @@ function Create({ history }) {
       .then((response) => {
         toast.dismiss();
         if (!Object.keys(response).length) {
-          setIsLoading(false);
           return toast.warn('Something went wrong...');
         }
         setVideoId(null);
         const { videoId } = response;
         setImageUrl(videoId);
-        setIsLoading(false);
       })
       .catch((error) => {
         console.error('Error:', error);
@@ -84,9 +78,13 @@ function Create({ history }) {
       .catch((error) => console.error('Error:', error));
   };
 
+  useEffect(() => {
+    if (!videoId) return;
+    handleSubmit();
+  }, [videoId]);
+
   const handleStopCapture = (blob) => {
     if (!blob) return;
-    setIsLoading(true);
     toast.info('Please be patient...');
     let formData = new FormData();
     formData.append('video', blob);
@@ -98,10 +96,9 @@ function Create({ history }) {
       .then((response) => {
         toast.dismiss();
         if (!response) {
-          setIsLoading(false);
           return toast.warn('Too large video ...');
         }
-        const { filename } = response; //console.log(filename);
+        const { filename } = response;
         const options = videoJsOptions;
         const src = `/video?filename=${filename}`;
         const videoId = filename.replace('.webm', '');
@@ -109,7 +106,6 @@ function Create({ history }) {
         options.sources[0].src = src;
         setOptions(options);
         setVideoId(videoId);
-        setIsLoading(false);
       });
   };
 
@@ -126,7 +122,11 @@ function Create({ history }) {
     </Link>
   );
 
-  console.log({ phase });
+  console.log({ text });
+
+  const isPrerecordingPhase = [PHASE_START, PHASE_COUNTDOWN].includes(phase);
+  const isPostRecordingPhase =
+    !isPrerecordingPhase && phase !== PHASE_RECORDING;
 
   return (
     <Page
@@ -140,29 +140,52 @@ function Create({ history }) {
         transition={Zoom}
       />
       <div className="gif-create-content column">
-        <Webcam
-          handleStopCapture={handleStopCapture}
-          isPlaying={phase === PHASE_RECORDING}
-        />
-        {[PHASE_START, PHASE_COUNTDOWN].includes(phase) && (
+        <div className="gif-video-container">
+          {imageUrl ? (
+            <img
+              src={`/img?filename=${imageUrl}`}
+              alt="Your GIF"
+              className="gif-video"
+            />
+          ) : (
+            <Webcam
+              handleStopCapture={handleStopCapture}
+              isPlaying={phase === PHASE_RECORDING}
+            />
+          )}
+        </div>
+        {isPrerecordingPhase && (
           <Countdown
             isPlaying={phase === PHASE_COUNTDOWN}
             onFinish={() => setPhase(PHASE_RECORDING)}
           />
         )}
         {phase === PHASE_RECORDING && (
-          <Countdown isPlaying={true} onFinish={() => setPhase(PHASE_TEXT)} danger />
+          <Countdown
+            isPlaying={true}
+            onFinish={() => setPhase(PHASE_TEXT)}
+            danger
+          />
         )}
-        <Button
-          onClick={() => setPhase(PHASE_COUNTDOWN)}
-          disabled={[PHASE_COUNTDOWN, PHASE_RECORDING].includes(phase)}
-          grey={phase === PHASE_COUNTDOWN}
-          red={phase === PHASE_RECORDING}
-        >
-          {phase === PHASE_START && 'Start Recording'}
-          {phase === PHASE_COUNTDOWN && 'Get Ready...'}
-          {phase === PHASE_RECORDING && 'Recording...'}
-        </Button>
+        {!isPostRecordingPhase && (
+          <Button
+            onClick={() => setPhase(PHASE_COUNTDOWN)}
+            disabled={phase !== PHASE_START}
+            grey={phase === PHASE_COUNTDOWN}
+            red={phase === PHASE_RECORDING}
+          >
+            {phase === PHASE_START && 'Start Recording'}
+            {phase === PHASE_COUNTDOWN && 'Get Ready...'}
+            {!isPrerecordingPhase && 'Recording...'}
+          </Button>
+        )}
+        {phase === PHASE_TEXT && (
+          <>
+            <textarea placeholder="Add a caption to your GIF!" onChange={(e) => setText(e.target.value)}>
+              {text}
+            </textarea>
+          </>
+        )}
       </div>
 
       {/*

@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { Button, Toast, ToastHeader } from 'reactstrap';
+import { Toast, ToastHeader } from 'reactstrap';
 import Webcam from 'react-webcam';
 
 const WebcamStreamCapture = ({
   handleStopCapture,
   isPlaying,
-  setIsPlaying,
 }) => {
   const webcamRef = useRef(null);
   const mediaRecorderRef = useRef(null);

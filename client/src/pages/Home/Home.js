@@ -54,8 +54,6 @@ const ListPage = () => {
 
   const orderedData = byNewest ? [...data].reverse() : data;
 
-  // gif-home-header row
-
   const header = (
     <>
       <span>
