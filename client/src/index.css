@@ -66,6 +66,22 @@ button, a {
   transition: background 150ms ease-in-out, color 150ms ease-in-out;
 }
 
+.gif-button-group {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+}
+
+.gif-button-group > * {
+  min-width: unset !important;
+  width: 50%;
+}
+
+.gif-button-group > *:not(:last-child) {
+  margin-right: 20px;
+}
+
 .gif-button-2 {
   margin-right: 8px;
   padding: 8px;

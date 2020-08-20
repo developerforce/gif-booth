@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import 'spinkit/css/spinkit.css';
 import download from 'downloadjs';
-import { ToastContainer, toast, Zoom } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import { Link } from 'react-router-dom';
 import './Create.css';
 import Webcam from '../../components/WebcamCapture';
@@ -38,31 +36,31 @@ function Create({ history }) {
   const [imageUrl, setImageUrl] = useState();
   const [text, setText] = useState('');
 
-  const handleSubmit = () => {
+  const createGIF = (callback) => {
     let formData = new FormData();
-    const text = ''; // e.target.text.value;
     const fontsize = text.length && 340 / text.length;
-    formData.append('text', `${text}`);
+    formData.append('text', text);
     formData.append('fontsize', fontsize);
     formData.append('videoId', videoId);
+    console.log({
+      method: 'POST',
+      body: formData,
+    });
     fetch('/video2gif', {
       method: 'POST',
       body: formData,
     })
       .then((res) => res.json())
       .then((response) => {
-        toast.dismiss();
+        console.log(response);
         if (!Object.keys(response).length) {
-          return toast.warn('Something went wrong...');
+          throw Error;
         }
-        setVideoId(null);
-        const { videoId } = response;
-        setImageUrl(videoId);
+        setImageUrl(response.videoId);
+        if (callback) callback();
       })
       .catch((error) => {
         console.error('Error:', error);
-        toast.dismiss();
-        toast.warn('Something went wrong...');
       });
   };
 
@@ -78,14 +76,20 @@ function Create({ history }) {
       .catch((error) => console.error('Error:', error));
   };
 
+  const retry = () => {
+    setVideoId(null);
+    setImageUrl(null);
+    setText('');
+    setPhase(PHASE_START);
+  };
+
   useEffect(() => {
     if (!videoId) return;
-    handleSubmit();
+    createGIF();
   }, [videoId]);
 
   const handleStopCapture = (blob) => {
     if (!blob) return;
-    toast.info('Please be patient...');
     let formData = new FormData();
     formData.append('video', blob);
     fetch('/uploadBlob', {
@@ -94,9 +98,8 @@ function Create({ history }) {
     })
       .then((res) => res.ok && res.json())
       .then((response) => {
-        toast.dismiss();
         if (!response) {
-          return toast.warn('Too large video ...');
+          throw Error;
         }
         const { filename } = response;
         const options = videoJsOptions;
@@ -106,7 +109,8 @@ function Create({ history }) {
         options.sources[0].src = src;
         setOptions(options);
         setVideoId(videoId);
-      });
+      })
+      .catch((error) => console.error('Error:', error));
   };
 
   const handleDownload = async () => {
@@ -115,14 +119,14 @@ function Create({ history }) {
     download(fileBlob, `${imageUrl}.gif`);
   };
 
+  console.log(imageUrl);
+
   const header = (
     <Link to="/" className="gif-button-2">
       Cancel
       <Icon name="close" />
     </Link>
   );
-
-  console.log({ text });
 
   const isPrerecordingPhase = [PHASE_START, PHASE_COUNTDOWN].includes(phase);
   const isPostRecordingPhase =
@@ -134,11 +138,6 @@ function Create({ history }) {
       header={header}
       headerClassName="gif-create-header"
     >
-      <ToastContainer
-        position="top-right"
-        style={{ zIndex: 1999, color: '#000' }}
-        transition={Zoom}
-      />
       <div className="gif-create-content column">
         <div className="gif-video-container">
           {imageUrl ? (
@@ -181,9 +180,29 @@ function Create({ history }) {
         )}
         {phase === PHASE_TEXT && (
           <>
-            <textarea placeholder="Add a caption to your GIF!" onChange={(e) => setText(e.target.value)}>
-              {text}
-            </textarea>
+            <textarea
+              placeholder="Add a caption to your GIF!"
+              onChange={(e) => setText(e.target.value)}
+              value={text}
+            />
+            <div className="gif-button-group">
+              <Button onClick={() => setPhase(PHASE_END)}>Skip</Button>
+              <Button
+                disabled={text === ''}
+                onClick={() => createGIF(() => setPhase(PHASE_END))}
+              >
+                Save Caption
+              </Button>
+            </div>
+          </>
+        )}
+        {phase === PHASE_END && (
+          <>
+            <div className="gif-button-group">
+              <Button onClick={handleDownload}>Download</Button>
+              <Button onClick={retry}>Retry</Button>
+            </div>
+            <Button onClick={handleUpload}>Share With Conference</Button>
           </>
         )}
       </div>
@@ -224,7 +243,7 @@ function Create({ history }) {
         disabled={!videoId}
         block
         className="mt-3"
-        onClick={handleSubmit}
+        onClick={createGIF}
       >
         Make GIF
       </button>
