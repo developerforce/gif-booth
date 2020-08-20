@@ -8,7 +8,7 @@ const WebcamStreamCapture = ({ handleStopCapture, isPlaying, setIsPlaying }) => 
   const [capturing, setCapturing] = useState(false);
   const [errMsg, setErrMsg] = useState();
   const [recordedChunks, setRecordedChunks] = useState([]);
-  
+
   const handleDataAvailable = useCallback(
     ({ data }) => {
       if (data.size > 0) {

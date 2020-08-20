@@ -1,0 +1,69 @@
+.gif-home {
+  background: white;
+  padding: 40px;
+}
+
+
+.gif-createnew-button {
+  position: fixed;
+  bottom: 118px;
+  left: 50%;
+  margin-left: -150px;
+}
+
+h1 > h2 {
+  display: inline;
+}
+
+.gif-home-header {
+  width: 100%;
+  margin-bottom: 40px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.gif-home-order > *:not(:last-child) {
+  margin-right: 8px;
+}
+
+.gif-home-order > button {
+  margin-right: 8px;
+  padding: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  height: min-content;
+  border-radius: 6px;
+  color: #718096;
+}
+
+.gif-home-order > button:hover {
+  color: #2A4365;
+}
+
+.gif-home-order > button.active {
+  color: white;
+  background: #718096;
+  pointer-events: none;
+}
+
+.gif-createnew-button > button {
+  width: 300px;
+}
+
+.gif-card-image {
+  height: 200px;
+  width: 260px;
+  object-fit: cover;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.gif-card-container {
+  display: grid;
+  justify-content: space-between;
+  max-width: 100%;
+  grid-template-columns: repeat(auto-fill, 260px);
+  margin: 0px auto;
+  gap: 4px;
+}

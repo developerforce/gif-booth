@@ -1,0 +1,11 @@
+.gif-page-container {
+  position: relative;
+  height: calc(100vh - 94px);
+  overflow-y: auto;
+}
+
+footer {
+  height: 94px;
+  background: #F4F4F4;
+  padding: 0 40px;
+}

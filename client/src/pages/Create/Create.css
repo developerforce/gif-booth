@@ -1,4 +1,4 @@
-.trash { 
+/* .trash { 
   position: absolute;
   top: 20px;
   right: 20px;
@@ -12,7 +12,7 @@
   text-align: center;
 }
 .trash:after { font-family: 'FontAwesome'; content: "\f00d"; color: #909090; }
-.trash:hover { background-color: #900; }
+.trash:hover { background-color: #900; } */
 
 .timer-wrapper {
   display: flex;

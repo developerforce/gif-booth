@@ -1,0 +1,23 @@
+.gif-button {
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 16px;
+  height: 56px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  min-width: 240px;
+  padding: 12px;
+  border-radius: 12px;
+}
+
+.primary {
+  color: white;
+  background: #4299E1;
+  border: 1px solid #3182CE;
+}
+
+.primary:hover {
+  background: #3182CE;
+}

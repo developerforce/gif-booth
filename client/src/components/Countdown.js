@@ -1,6 +1,5 @@
 import React from "react";
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
-import '../App.css';
 
 const Countdown = ({ isPlaying, setIsCountdownPlaying, setIsTimerPlaying }) => {
 
@@ -11,7 +10,7 @@ const Countdown = ({ isPlaying, setIsCountdownPlaying, setIsTimerPlaying }) => {
       <div className="timer-text mt-3">seconds</div>
     </div>
   );
-  
+
   return (
     <div className="App">
       <div className="timer-wrapper">

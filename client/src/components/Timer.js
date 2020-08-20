@@ -1,6 +1,5 @@
 import React from "react";
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
-import '../App.css';
 
 const Timer = ({ isPlaying, setIsPlaying }) => {
 
