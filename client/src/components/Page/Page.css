@@ -2,10 +2,27 @@
   position: relative;
   height: calc(100vh - 94px);
   overflow-y: auto;
+  padding: 40px;
+}
+
+.gif-page-header {
+  width: 100%;
+  height: 48px;
+  margin-bottom: 40px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Need to look into how css is being loaded -- as is it is hard to override via classNames.
+for now I will leave classname overrides inside the .css of the components they are operating on */
+.gif-create-header {
+  justify-content: flex-end;
 }
 
 footer {
   height: 94px;
-  background: #F4F4F4;
+  background: #f4f4f4;
   padding: 0 40px;
 }

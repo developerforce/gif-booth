@@ -1,14 +1,16 @@
-import React from "react";
-import cx from "classnames";
-import "./Button.css";
+import React from 'react';
+import cx from 'classnames';
+import './Button.css';
 
 const Button = ({
-  className,
-  onClick,
   children,
+  className,
+  disabled,
+  grey,
   icon,
+  onClick,
+  red,
   secondary,
-  tertiary,
 }) => {
   return (
     <button
@@ -16,9 +18,11 @@ const Button = ({
       className={cx(
         className,
         'gif-button',
-        !secondary && !tertiary && "primary",
-        secondary && "secondary",
-        tertiary && "tertiary"
+        disabled && 'disabled',
+        !secondary && 'primary',
+        secondary && 'secondary',
+        grey && 'grey',
+        red && 'red'
       )}
     >
       {children}
@@ -27,7 +31,7 @@ const Button = ({
 };
 
 Button.defaultProps = {
-  className: "",
+  className: '',
 };
 
 export default Button;

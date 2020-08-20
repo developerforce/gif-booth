@@ -33,10 +33,6 @@ body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
-a {
-  text-decoration: none !important;
-}
-
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
@@ -62,9 +58,36 @@ p {
   color: #718096;
 }
 
-button {
+button, a {
   border: none;
   background: none;
   cursor: pointer;
+  text-decoration: none !important;
   transition: background 150ms ease-in-out, color 150ms ease-in-out;
+}
+
+.gif-button-2 {
+  margin-right: 8px;
+  padding: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  height: min-content;
+  border-radius: 6px;
+  color: #718096;
+}
+
+.gif-button-2 > i {
+  height: 12px;
+  width: 12px;
+  margin-left: 8px;
+}
+
+.gif-button-2:hover {
+  color: #2A4365;
+}
+
+.gif-button-2.active {
+  color: white;
+  background: #718096;
+  pointer-events: none;
 }

@@ -1,36 +1,16 @@
-/* .trash { 
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  line-height: 1.4;
-  background: #222;
-  border-radius: 50%;
-  width: 25px;
-  height: 25px;
-  z-index: 2;
-  font-size: 17px;
-  text-align: center;
-}
-.trash:after { font-family: 'FontAwesome'; content: "\f00d"; color: #909090; }
-.trash:hover { background-color: #900; } */
-
-.timer-wrapper {
-  display: flex;
-  justify-content: center;
-  margin-top: 2rem;
-}
-
-.timer {
-  font-family: "Montserrat";
-  display: flex;
-  flex-direction: column;
+.gif-create-content {
+  width: 100%;
   align-items: center;
 }
 
-.timer-text {
-  color: #aaa;
+.gif-create-content > * {
+  width: 384px;
 }
 
-.timer-value {
-  font-size: 40px;
+.gif-create-content > *:not(:last-child) {
+  margin-bottom: 20px;
+}
+
+.gif-video {
+  border-radius: 12px;
 }

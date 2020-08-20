@@ -1,0 +1,35 @@
+.gif-countdown {
+  position: relative;
+  height: 6px;
+  border-radius: 6px;
+  background: #d8d8d8;
+}
+
+@keyframes stretch {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+.gif-countdown.playing::after {
+  animation: stretch 3s linear forwards;
+}
+
+.gif-countdown::after {
+  position: absolute;
+  content: '';
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 0;
+  background: #a0aec0;
+  transition: width 3s linear;
+  border-radius: inherit;
+}
+
+.gif-countdown.danger::after {
+  background: #f49494;
+}

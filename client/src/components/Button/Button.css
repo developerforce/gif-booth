@@ -12,12 +12,34 @@
   border-radius: 12px;
 }
 
-.primary {
-  color: white;
-  background: #4299E1;
-  border: 1px solid #3182CE;
+.gif-button.disabled {
+  pointer-events: none;
 }
 
-.primary:hover {
-  background: #3182CE;
+.gif-button.primary {
+  color: white;
+  background: #4299e1;
+  border: 1px solid #3182ce;
+}
+
+.gif-button.primary:hover {
+  background: #3182ce;
+}
+
+.gif-button.primary.grey {
+  background: #A0AEC0;
+  border-color: #718096;
+}
+
+.gif-button.primary.grey:hover {
+  background: #718096;
+}
+
+.gif-button.primary.red {
+  background: #F56565;
+  border-color: #E53E3E;
+}
+
+.gif-button.primary.red:hover {
+  background: #E53E3E;
 }

@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import cx from "classnames";
-import download from "downloadjs";
-import "./Home.css";
-import Button from "../../components/Button";
-import Page from "../../components/Page";
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import cx from 'classnames';
+import download from 'downloadjs';
+import './Home.css';
+import Button from '../../components/Button';
+import Page from '../../components/Page';
 
 // const deleteObj = (filename) => {
 // 	const formData = { filename };
@@ -26,7 +26,7 @@ import Page from "../../components/Page";
 // AYYYYYYYY
 // this needs to be replaced when dev is over:
 // const s3URL = 'https://bucketeer-7dcba73d-2692-4191-be53-1b4e69bfff3d.s3.amazonaws.com/';
-const s3URL = "https://gif-app-test.s3.us-east-2.amazonaws.com/";
+const s3URL = 'https://gif-app-test.s3.us-east-2.amazonaws.com/';
 
 const handleDownload = async (filename) => {
   const res = await fetch(`/s3-download?filename=${filename}`);
@@ -44,40 +44,45 @@ const ListPage = () => {
 
   const loadGifs = async () => {
     try {
-      const res = await fetch("/all-gifs");
+      const res = await fetch('/all-gifs');
       const json = await res.json();
       setData(json.Contents);
     } catch (e) {
-      console.error("Error:", e);
+      console.error('Error:', e);
     }
   };
 
   const orderedData = byNewest ? [...data].reverse() : data;
 
-  return (
-    <Page className="gif-home">
-      <div className="gif-home-header row">
-        <span>
-          <h1>Browse GIFs</h1>
-          <h2>{` (${data?.length || 0})`}</h2>
-        </span>
-        <div className={cx("gif-home-order", "row")}>
-          <p>Sort By</p>
-          <button
-            className={cx(byNewest && "active")}
-            onClick={() => setByNewest(true)}
-          >
-            Newest
-          </button>
-          <button
-            className={cx(!byNewest && "active")}
-            onClick={() => setByNewest(false)}
-          >
-            Oldest
-          </button>
-        </div>
+  // gif-home-header row
+
+  const header = (
+    <>
+      <span>
+        <h1>Browse GIFs</h1>
+        <h2>{` (${data?.length || 0})`}</h2>
+      </span>
+      <div className={cx('gif-home-order', 'row')}>
+        <p>Sort By</p>
+        <button
+          className={cx('gif-button-2', byNewest && 'active')}
+          onClick={() => setByNewest(true)}
+        >
+          Newest
+        </button>
+        <button
+          className={cx('gif-button-2', !byNewest && 'active')}
+          onClick={() => setByNewest(false)}
+        >
+          Oldest
+        </button>
       </div>
-      <div className="gif-card-container">
+    </>
+  );
+
+  return (
+    <Page header={header}>
+      <div className="gif-cards-container">
         <Link to="/new-gif" className="gif-createnew-button">
           <Button>Create Your Own GIF</Button>
         </Link>
