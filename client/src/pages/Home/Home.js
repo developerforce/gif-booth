@@ -82,7 +82,7 @@ const ListPage = () => {
     <Page header={header}>
       <div className="gif-cards-container">
         <Link to="/new-gif" className="gif-createnew-button">
-          <Button>Create Your Own GIF</Button>
+          <Button icon="plus">Create Your Own GIF</Button>
         </Link>
         {orderedData.map(({ Key }) => (
           <img

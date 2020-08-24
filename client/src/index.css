@@ -63,7 +63,7 @@ button, a {
   background: none;
   cursor: pointer;
   text-decoration: none !important;
-  transition: background 150ms ease-in-out, color 150ms ease-in-out;
+  transition: opacity 150ms ease-in-out, background 150ms ease-in-out, color 150ms ease-in-out, border-color 150ms ease-in-out;
 }
 
 .gif-button-group {

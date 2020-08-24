@@ -1,5 +1,6 @@
 import React from 'react';
 import cx from 'classnames';
+import Icon from '../Icon';
 import './Button.css';
 
 const Button = ({
@@ -8,6 +9,7 @@ const Button = ({
   disabled,
   grey,
   icon,
+  noClick,
   onClick,
   red,
   secondary,
@@ -18,6 +20,7 @@ const Button = ({
       className={cx(
         className,
         'gif-button',
+        noClick && 'noclick',
         disabled && 'disabled',
         !secondary && 'primary',
         secondary && 'secondary',
@@ -25,6 +28,11 @@ const Button = ({
         red && 'red'
       )}
     >
+      {icon && (
+        <div className="button-icon-wrapper">
+          <Icon name={icon} />
+        </div>
+      )}
       {children}
     </button>
   );

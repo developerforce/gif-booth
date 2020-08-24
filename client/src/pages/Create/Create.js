@@ -29,12 +29,11 @@ function Create({ history }) {
       },
     ],
   });
-
   const [phase, setPhase] = useState(PHASE_START);
-
   const [videoId, setVideoId] = useState();
   const [imageUrl, setImageUrl] = useState();
   const [text, setText] = useState('');
+  const [isUploading, setUploading] = useState(false);
 
   const createGIF = (callback) => {
     let formData = new FormData();
@@ -64,10 +63,16 @@ function Create({ history }) {
       });
   };
 
-  const handleUpload = (filename) => {
+  useEffect(() => {
+    if (!videoId) return;
+    createGIF();
+  }, [videoId]);
+
+  const handleUpload = () => {
+    setUploading(true);
     fetch('/uploadImage', {
       method: 'POST',
-      body: JSON.stringify({ filename }),
+      body: JSON.stringify({ filename: imageUrl }),
       headers: {
         'Content-Type': 'application/json',
       },
@@ -82,11 +87,6 @@ function Create({ history }) {
     setText('');
     setPhase(PHASE_START);
   };
-
-  useEffect(() => {
-    if (!videoId) return;
-    createGIF();
-  }, [videoId]);
 
   const handleStopCapture = (blob) => {
     if (!blob) return;
@@ -119,8 +119,6 @@ function Create({ history }) {
     download(fileBlob, `${imageUrl}.gif`);
   };
 
-  console.log(imageUrl);
-
   const header = (
     <Link to="/" className="gif-button-2">
       Cancel
@@ -142,7 +140,7 @@ function Create({ history }) {
         <div className="gif-video-container">
           {imageUrl ? (
             <img
-              src={`/img?filename=${imageUrl}`}
+              src={`/img?filename=${imageUrl}&reload=${phase === PHASE_END}`}
               alt="Your GIF"
               className="gif-video"
             />
@@ -169,9 +167,10 @@ function Create({ history }) {
         {!isPostRecordingPhase && (
           <Button
             onClick={() => setPhase(PHASE_COUNTDOWN)}
-            disabled={phase !== PHASE_START}
+            noClick={phase !== PHASE_START}
             grey={phase === PHASE_COUNTDOWN}
             red={phase === PHASE_RECORDING}
+            icon="camera"
           >
             {phase === PHASE_START && 'Start Recording'}
             {phase === PHASE_COUNTDOWN && 'Get Ready...'}
@@ -186,7 +185,9 @@ function Create({ history }) {
               value={text}
             />
             <div className="gif-button-group">
-              <Button onClick={() => setPhase(PHASE_END)}>Skip</Button>
+              <Button onClick={() => setPhase(PHASE_END)} secondary grey>
+                Skip
+              </Button>
               <Button
                 disabled={text === ''}
                 onClick={() => createGIF(() => setPhase(PHASE_END))}
@@ -199,61 +200,19 @@ function Create({ history }) {
         {phase === PHASE_END && (
           <>
             <div className="gif-button-group">
-              <Button onClick={handleDownload}>Download</Button>
-              <Button onClick={retry}>Retry</Button>
+              <Button icon="download" onClick={handleDownload} secondary grey>
+                Download
+              </Button>
+              <Button icon="undo" onClick={retry} secondary red>
+                Retry
+              </Button>
             </div>
-            <Button onClick={handleUpload}>Share With Conference</Button>
+            <Button icon="share" onClick={handleUpload}>
+              {isUploading ? 'Uploading...' : 'Share With Conference'}
+            </Button>
           </>
         )}
       </div>
-
-      {/*
-      {imageUrl ? (
-        <div>
-          ok hiiiiiiii
-          <button onClick={() => handleUpload(imageUrl)}>Save to grid</button>
-          <button onClick={handleDownload}>
-            <span className="fa fa-download fa-3x" title="Download GIF"></span>
-          </button>
-          <button onClick={() => setImageUrl(null)}>Start over</button>
-          <img
-            src={`/img?filename=${imageUrl}`}
-            alt="Card image cap"
-            className="gif-create-image"
-          />
-        </div>
-      ) : (
-        <Webcam
-          handleStopCapture={handleStopCapture}
-          isPlaying={isTimerPlaying}
-          setIsPlaying={setIsCountdownPlaying}
-        />
-      )}
-      <input
-        type="textarea"
-        name="text"
-        rows={2}
-        maxlength={64}
-        disabled={!videoId}
-        style={{ fontSize: "xx-large" }}
-        placeholder="Add text to GIF&#13;Max 64 characters"
-      />
-      <button
-        outline={!videoId}
-        disabled={!videoId}
-        block
-        className="mt-3"
-        onClick={createGIF}
-      >
-        Make GIF
-      </button>
-      {isLoading && (
-        <div className="sk-circle">
-          {[...Array(12)].map((e, i) => (
-            <div key={i} className={`sk-circle${i + 1} sk-child`}></div>
-          ))}
-        </div>
-      )} */}
     </Page>
   );
 }

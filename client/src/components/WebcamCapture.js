@@ -48,7 +48,6 @@ const WebcamStreamCapture = ({
   }, [mediaRecorderRef, setCapturing]);
 
   useEffect(() => {
-    //console.log(recordedChunks);
     if (recordedChunks.length) {
       const blob = new Blob(recordedChunks, {
         type: 'video/webm',

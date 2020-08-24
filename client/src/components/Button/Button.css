@@ -1,4 +1,5 @@
 .gif-button {
+  position: relative;
   cursor: pointer;
   font-weight: 600;
   font-size: 16px;
@@ -10,16 +11,46 @@
   min-width: 240px;
   padding: 12px;
   border-radius: 12px;
+  border-width: 1px;
+  border-style: solid;
+}
+
+.gif-button.noclick {
+  pointer-events: none;
 }
 
 .gif-button.disabled {
+  opacity: 0.6;
   pointer-events: none;
+}
+
+.gif-button.primary > .button-icon-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background 150ms ease-in-out;
+  position: absolute;
+  left: 8px;
+  top: calc(50% - 18px);
+  border-radius: 50%;
+  height: 36px;
+  width: 36px;
+  background: #3182ce;
+}
+
+.gif-button.primary:hover > .button-icon-wrapper {
+  background: #2B6CB0;
+}
+
+.gif-button.primary i {
+  color: #E7F5FE;
+  transform: translateX(0.5px);
 }
 
 .gif-button.primary {
   color: white;
   background: #4299e1;
-  border: 1px solid #3182ce;
+  border-color: #3182ce;
 }
 
 .gif-button.primary:hover {
@@ -35,6 +66,14 @@
   background: #718096;
 }
 
+.gif-button.primary.grey > .button-icon-wrapper {
+  background: #718096;
+}
+
+.gif-button.primary.grey:hover > .button-icon-wrapper {
+  background: #4A5568;
+}
+
 .gif-button.primary.red {
   background: #F56565;
   border-color: #E53E3E;
@@ -42,4 +81,48 @@
 
 .gif-button.primary.red:hover {
   background: #E53E3E;
+}
+
+.gif-button.primary.red > .button-icon-wrapper {
+  background: #E53E3E;
+}
+
+.gif-button.primary.red:hover > .button-icon-wrapper {
+  background: #C53030;
+}
+
+.gif-button.secondary {
+  background: transparent;
+  color: #3182ce;
+  border-color: #3182ce;
+}
+
+
+.gif-button.secondary > .button-icon-wrapper {
+  margin-right: 12px;
+}
+
+.gif-button.secondary:hover {
+  color: #2C5282;
+  border-color: #2C5282;
+}
+
+.gif-button.secondary.grey {
+  color: #718096;
+  border-color: #A0AEC0;
+}
+
+.gif-button.secondary.grey:hover {
+  color: #4A5568;
+  border-color: #4A5568;
+}
+
+.gif-button.secondary.red {
+  color: #E53E3E;
+  border-color: #F56565;
+}
+
+.gif-button.secondary.red:hover {
+  color: #C53030;
+  border-color: #C53030;
 }
