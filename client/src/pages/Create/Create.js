@@ -170,7 +170,7 @@ function Create({ history }) {
             noClick={phase !== PHASE_START}
             grey={phase === PHASE_COUNTDOWN}
             red={phase === PHASE_RECORDING}
-            icon="camera"
+            icon={phase === PHASE_START ? 'play' : 'camera'}
           >
             {phase === PHASE_START && 'Start Recording'}
             {phase === PHASE_COUNTDOWN && 'Get Ready...'}
@@ -200,14 +200,26 @@ function Create({ history }) {
         {phase === PHASE_END && (
           <>
             <div className="gif-button-group">
-              <Button icon="download" onClick={handleDownload} secondary grey>
+              <Button
+                icon="download"
+                onClick={handleDownload}
+                disabled={isUploading}
+                secondary
+                grey
+              >
                 Download
               </Button>
-              <Button icon="undo" onClick={retry} secondary red>
+              <Button
+                icon="undo"
+                onClick={retry}
+                disabled={isUploading}
+                secondary
+                red
+              >
                 Retry
               </Button>
             </div>
-            <Button icon="share" onClick={handleUpload}>
+            <Button icon="share" onClick={handleUpload} noClick={isUploading}>
               {isUploading ? 'Uploading...' : 'Share With Conference'}
             </Button>
           </>
