@@ -11,13 +11,6 @@
   margin-bottom: 20px;
 }
 
-.gif-video-container > * {
-  width: 100%;
-  border-radius: 12px;
-  min-height: 288px;
-  background: #EDF2F7;
-}
-
 .gif-video {
   border-radius: 12px;
 }

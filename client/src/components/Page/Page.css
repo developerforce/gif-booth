@@ -15,12 +15,6 @@
   align-items: center;
 }
 
-/* Need to look into how css is being loaded -- as is it is hard to override via classNames.
-for now I will leave classname overrides inside the .css of the components they are operating on */
-.gif-create-header {
-  justify-content: flex-end;
-}
-
 footer {
   height: 94px;
   background: #f4f4f4;

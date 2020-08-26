@@ -1,0 +1,22 @@
+.gif-warning {
+  align-items: center;
+  width: 100%;
+  margin-top: 5%;
+}
+
+.gif-warning > *:not(:last-child) {
+  margin-bottom: 20px;
+}
+
+.gif-warning > i {
+  color: #CBD5E0;
+}
+
+.gif-warning > p {
+  margin-bottom: 40px !important;
+}
+
+.gif-warning > * {
+  max-width: 520px;
+  text-align: center;
+}

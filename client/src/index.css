@@ -46,6 +46,7 @@ h1, h2 {
 
 h1 {
   font-weight: bold;
+  margin: unset;
 }
 
 h2 {
@@ -56,12 +57,14 @@ p {
   font-size: 14px;
   font-weight: lightest;
   color: #718096;
+  margin: unset;
 }
 
 button, a {
   border: none;
   background: none;
   cursor: pointer;
+  user-select: none;
   text-decoration: none !important;
   transition: opacity 150ms ease-in-out, background 150ms ease-in-out, color 150ms ease-in-out, border-color 150ms ease-in-out;
 }
@@ -106,4 +109,17 @@ button, a {
   color: white;
   background: #718096;
   pointer-events: none;
+}
+
+.gif-image-container {
+  background: #EDF2F7;
+  width: 100%;
+  border-radius: 12px;
+  min-height: 288px;
+}
+
+.gif-image-container > * {
+  width: 100%;
+  border-radius: 12px;
+  min-height: 100%;
 }

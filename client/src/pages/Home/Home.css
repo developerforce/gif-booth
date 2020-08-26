@@ -18,8 +18,8 @@ h1 > h2 {
 }
 
 .gif-card-image {
-  height: 200px;
-  width: 260px;
+  width: 100%;
+  min-height: 100%;
   object-fit: cover;
   border-radius: 12px;
   cursor: pointer;
@@ -29,7 +29,32 @@ h1 > h2 {
   display: grid;
   justify-content: space-between;
   max-width: 100%;
-  grid-template-columns: repeat(auto-fill, 260px);
-  margin: 0px auto;
+  grid-template-columns: repeat(2, auto);
   gap: 4px;
+  margin: 0px auto;
+}
+
+@media (min-width: 560px) {
+  .gif-cards-container {
+    grid-template-columns: repeat(3, auto);
+  }
+}
+
+
+@media (min-width: 940px) {
+  .gif-cards-container {
+    grid-template-columns: repeat(4, auto);
+  }
+}
+
+@media (min-width: 1200px) {
+  .gif-cards-container {
+    grid-template-columns: repeat(5, auto);
+  }
+}
+
+@media (min-width: 1500px) {
+  .gif-cards-container {
+    grid-template-columns: repeat(6, auto);
+  }
 }
