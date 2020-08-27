@@ -35,10 +35,14 @@ const storage = multer.diskStorage({
     cb(null, './uploads/');
   },
   filename: (req, file, cb) => {
-    const filename = `${Date.now()}.webm`;
+    let filename = `${Date.now()}.${file.originalname.split('.')[1]}`;
+    if (req.path === '/uploadBlob') {
+      filename = `${Date.now()}.webm`;
+    }
     cb(null, filename);
   },
 });
+
 const upload = multer({ storage });
 
 const listGifs = async () => {
@@ -105,10 +109,10 @@ app.post('/createGroupPhoto', async (_, res) => {
   }
 });
 
-app.post('/uploadGIF', ({ body }, res) => {
-  const { filename } = body;
-  const path = `temp/${filename}.gif`;
+const uploadGIF = async (res, filename, folderName, onSuccess) => {
+  const path = `${folderName}/${filename}.gif`;
   const fileStream = fs.createReadStream(path);
+
   const params = {
     Key: `gifs/${filename}.gif`,
     Bucket: process.env.BUCKETEER_BUCKET_NAME,
@@ -117,21 +121,42 @@ app.post('/uploadGIF', ({ body }, res) => {
     ACL: 'public-read',
   };
 
-  s3.upload(params, (err, data) => {
-    if (err) {
-      console.log(err, err.stack);
-      return;
-    } else {
+  await s3
+    .upload(params)
+    .promise()
+    .then((data) => {
       console.log('s3.upload', data);
-      fs.unlink(`uploads/${filename}.webm`, () =>
-        console.log('.webm file was deleted')
-      );
-      fs.unlink(`uploads/${filename}.png`, () =>
-        console.log('.png file was deleted')
-      );
-      fs.unlink(path, () => console.log('.gif file was deleted'));
       res.send(data);
-    }
+      fs.unlink(path, () => console.log(`${path} was deleted after upload`));
+      if (onSuccess) onSuccess();
+    })
+    .catch((e) => {
+      console.log(e, e.stack);
+      res.status(500).send(err);
+    });
+};
+
+app.post('/uploadUserGIF', upload.single('gif'), async (req, res) => {
+  const gif = req.file;
+  if (!gif) {
+    res.status(400).send({
+      status: false,
+      data: 'No file is selected.',
+    });
+  } else {
+    uploadGIF(res, gif.filename.replace('.gif', ''), 'uploads');
+  }
+});
+
+app.post('/uploadGIF', ({ body }, res) => {
+  const { filename } = body;
+  uploadGIF(res, filename, 'temp', () => {
+    fs.unlink(`uploads/${filename}.webm`, () =>
+      console.log('.webm file was deleted')
+    );
+    fs.unlink(`uploads/${filename}.png`, () =>
+      console.log('.png file was deleted')
+    );
   });
 });
 
@@ -162,7 +187,6 @@ app.post('/video2gif', upload.none(), ({ body }, res) => {
       },
     ])
     .on('end', () => {
-      //console.log('res: ', body);
       res.send(body);
     })
     .on('error', (err) => {
@@ -185,38 +209,6 @@ app.post('/uploadBlob', upload.single('video'), ({ file }, res) => {
     });
 });
 
-app.get('/video', (req, res) => {
-  const { filename } = req.query;
-  const path = `uploads/${filename}`;
-  const stat = fs.statSync(path);
-  const fileSize = stat.size;
-  const range = req.headers.range;
-  if (range) {
-    const parts = range.replace(/bytes=/, '').split('-');
-    const start = parseInt(parts[0], 10);
-    const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
-
-    const chunksize = end - start + 1;
-    const file = fs.createReadStream(path, { start, end });
-    const head = {
-      'Content-Range': `bytes ${start}-${end}/${fileSize}`,
-      'Accept-Ranges': 'bytes',
-      'Content-Length': chunksize,
-      'Content-Type': 'video/webm',
-    };
-
-    res.writeHead(206, head);
-    file.pipe(res);
-  } else {
-    const head = {
-      'Content-Length': fileSize,
-      'Content-Type': 'video/webm',
-    };
-    res.writeHead(200, head);
-    fs.createReadStream(path).pipe(res);
-  }
-});
-
 app.get('/img', (req, res) => {
   const { filename } = req.query;
   const path = `temp/${filename}.gif`;
@@ -226,19 +218,6 @@ app.get('/img', (req, res) => {
   const head = {
     'Content-Length': fileSize,
     'Content-Type': `image/${ext}`,
-  };
-  res.writeHead(200, head);
-  fs.createReadStream(path).pipe(res);
-});
-
-app.get('/poster', (req, res) => {
-  const { filename } = req.query;
-  const path = `uploads/${filename}`;
-  const stat = fs.statSync(path);
-  const fileSize = stat.size;
-  const head = {
-    'Content-Length': fileSize,
-    'Content-Type': `image/png`,
   };
   res.writeHead(200, head);
   fs.createReadStream(path).pipe(res);
@@ -262,7 +241,6 @@ app.get('/s3-download', async (req, res) => {
   s3.getObject(params, (err, data) => {
     if (err) console.log(err, err.stack);
     else {
-      console.log('get file', data);
       res.send(data.Body);
     }
   });

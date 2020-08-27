@@ -13,6 +13,7 @@ const Button = ({
   onClick,
   red,
   secondary,
+  ...props
 }) => {
   return (
     <button
@@ -27,6 +28,7 @@ const Button = ({
         grey && 'grey',
         red && 'red'
       )}
+      {...props}
     >
       {icon && (
         <div className="button-icon-wrapper">

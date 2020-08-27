@@ -49,7 +49,7 @@ const ListPage = () => {
             key={Key}
             onClick={() => downloadFromS3(Key)}
             src={src}
-            alt="Card image cap"
+            alt={`GIF ${Key}`}
             className="gif-card-image"
           />
         ))}

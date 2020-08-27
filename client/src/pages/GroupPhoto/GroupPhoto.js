@@ -51,7 +51,7 @@ const GroupPhoto = () => {
           {file && (
             <img
               src={`${file?.Location}?LastModified=${file?.LastModified}`}
-              alt="groupphoto"
+              alt="Group Snapshot"
               className="gif-groupphoto-image"
             />
           )}

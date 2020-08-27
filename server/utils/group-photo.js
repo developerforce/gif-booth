@@ -11,7 +11,7 @@ const fetchImg = (url) =>
 const fetchImgs = (imgs) => Promise.all(imgs.map(fetchImg));
 
 const createLayout = (urls) => {
-  const aspectRatio = 1 + 1 / 3; // width / height
+  const aspectRatio = 1 + 1 / 3; // width / height (is determined by actual size of webcam element in the FE)
 
   const count = urls.length;
 

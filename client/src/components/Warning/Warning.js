@@ -7,37 +7,45 @@ import './Warning.css';
 const Warning = ({
   title,
   message,
-  ctaOverride,
+  content,
   ctaLabel,
   ctaOnClick,
   ctaIcon,
+  ctaDisabled,
 }) => (
   <div className="gif-warning column">
     <Icon name="exclamation-triangle" size={4} />
     <h1>{title}</h1>
     <p>{message}</p>
-    {ctaOverride || (
-      <Button icon={ctaIcon} onClick={ctaOnClick} secondary grey>
-        {ctaLabel}
-      </Button>
-    )}
+    {content}
+    <Button
+      disabled={ctaDisabled}
+      icon={ctaIcon}
+      onClick={ctaOnClick}
+      secondary
+      grey
+    >
+      {ctaLabel}
+    </Button>
   </div>
 );
 
 Warning.propTypes = {
   title: PropTypes.string.isRequired,
   message: PropTypes.string.isRequired,
-  ctaOverride: PropTypes.node,
+  content: PropTypes.node,
   ctaLabel: PropTypes.string,
   ctaOnClick: PropTypes.func,
   ctaIcon: PropTypes.string,
+  ctaDisabled: PropTypes.bool,
 };
 
 Warning.defaultProps = {
-  ctaOverride: null,
+  content: null,
   ctaLabel: null,
   ctaOnClick: null,
   ctaIcon: null,
+  ctaDisabled: false,
 };
 
 export default Warning;
