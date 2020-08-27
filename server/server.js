@@ -49,9 +49,9 @@ const listGifs = async () => {
     };
     const result = await s3.listObjects(params).promise();
     result.Contents = result.Contents.reduce(
-      (acc, Content) =>
-        Content.Key.includes('.gif')
-          ? [...acc, { ...Content, src: `${s3URL}${Content.Key}` }]
+      (acc, file) =>
+        file.Key.includes('.gif')
+          ? [...acc, { ...file, src: `${s3URL}${file.Key}` }]
           : acc,
       []
     );
@@ -63,6 +63,19 @@ const listGifs = async () => {
 
 app.get('/listGifs', async (_, res) => {
   const result = await listGifs();
+  res.send(result);
+});
+
+app.post('/getGroupPhoto', async (_, res) => {
+  const params = {
+    Bucket: process.env.BUCKETEER_BUCKET_NAME,
+    Prefix: 'group_photo.png',
+  };
+  const result = await s3.listObjects(params).promise();
+  result.Contents = result.Contents.map((file) => ({
+    ...file,
+    Location: `${s3URL}${file.Key}`,
+  }));
   res.send(result);
 });
 
@@ -83,10 +96,7 @@ app.post('/createGroupPhoto', async (_, res) => {
         console.log(err, err.stack);
         return;
       } else {
-        // data.payload = {
-        //   filename: 'group_photo.png',
-        //   src: `${s3URL}${group_photo.png}`,
-        // };
+        data.LastModified = Date.now();
         res.send(data);
       }
     });

@@ -5,6 +5,7 @@ import { downloadFromS3 } from '../../utils/download';
 import './GroupPhoto.css';
 
 const GroupPhoto = () => {
+  const [isLoading, setIsLoading] = useState(true);
   const [isGenerating, setIsGenerating] = useState(false);
   const [file, setFile] = useState(null);
 
@@ -21,11 +22,27 @@ const GroupPhoto = () => {
     setIsGenerating(false);
   };
 
-  // useEffect(() => {
-  //   createGroupPhoto();
-  // }, []);
+  const getGroupPhoto = async () => {
+    const res = await fetch('/getGroupPhoto', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    const json = await res.json();
+    if (json.Contents.length > 0) setFile(json.Contents[0]);
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    getGroupPhoto();
+  }, []);
 
   const header = <h1>Create Group Photo</h1>;
+
+  let buttonText = file ? 'Redo Group Photo' : 'Make Group Photo';
+  if (isGenerating) buttonText = 'Making Group Photo...';
+  if (isLoading) buttonText = 'Loading...';
 
   return (
     <Page header={header}>
@@ -33,15 +50,18 @@ const GroupPhoto = () => {
         <div className="gif-image-container">
           {file && (
             <img
-              src={file?.Location}
+              src={`${file?.Location}?LastModified=${file?.LastModified}`}
               alt="groupphoto"
               className="gif-groupphoto-image"
             />
           )}
         </div>
         <div className="gif-button-group">
-          <Button disabled={isGenerating} onClick={createGroupPhoto}>
-            {isGenerating ? 'Making Group Photo...' : 'Make Group Photo'}
+          <Button
+            disabled={isGenerating || isLoading}
+            onClick={createGroupPhoto}
+          >
+            {buttonText}
           </Button>
           <Button
             grey

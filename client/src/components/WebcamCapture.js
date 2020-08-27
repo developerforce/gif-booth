@@ -32,7 +32,7 @@ const WebcamStreamCapture = ({
         setCapturing(true);
         mediaRecorderRef.current = new MediaRecorder(webcamRef.current.stream, {
           mimeType: 'video/webm',
-        }); //console.log(mediaRecorderRef);
+        });
         mediaRecorderRef.current.addEventListener(
           'dataavailable',
           handleDataAvailable
