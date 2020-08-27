@@ -64,7 +64,7 @@ const stitchImgs = async (urls) => {
   );
 
   const stitched = await sharp({
-    create: { height, width, channels: 4, background: 'white' },
+    create: { height, width, channels: 4, background: '#EDF2F7' },
   }).composite(inputs);
 
   return stitched;
