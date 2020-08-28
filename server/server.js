@@ -45,20 +45,20 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-const listGifs = async () => {
+const GREETING_PREFIX = 'gifs/greeting-';
+
+const listGifs = async (MaxKeys) => {
   try {
     const params = {
       Bucket: process.env.BUCKETEER_BUCKET_NAME,
-      Prefix: 'gifs/',
+      Prefix: GREETING_PREFIX,
+      MaxKeys,
     };
     const result = await s3.listObjects(params).promise();
-    result.Contents = result.Contents.reduce(
-      (acc, file) =>
-        file.Key.includes('.gif')
-          ? [...acc, { ...file, src: `${s3URL}${file.Key}` }]
-          : acc,
-      []
-    );
+    result.Contents = result.Contents.map((file) => ({
+      ...file,
+      src: `${s3URL}${file.Key}`,
+    }));
     return result;
   } catch (e) {
     console.log(e);
@@ -66,7 +66,7 @@ const listGifs = async () => {
 };
 
 app.get('/listGifs', async (_, res) => {
-  const result = await listGifs();
+  const result = await listGifs(50);
   res.send(result);
 });
 
@@ -114,7 +114,7 @@ const uploadGIF = async (res, filename, folderName, onSuccess) => {
   const fileStream = fs.createReadStream(path);
 
   const params = {
-    Key: `gifs/${filename}.gif`,
+    Key: `${GREETING_PREFIX}${Date.now()}.gif`,
     Bucket: process.env.BUCKETEER_BUCKET_NAME,
     Body: fileStream,
     ContentType: 'image/gif',
@@ -144,7 +144,8 @@ app.post('/uploadUserGIF', upload.single('gif'), async (req, res) => {
       data: 'No file is selected.',
     });
   } else {
-    uploadGIF(res, gif.filename.replace('.gif', ''), 'uploads');
+    const filename = gif.filename.replace('.gif', '');
+    uploadGIF(res, filename, 'uploads');
   }
 });
 

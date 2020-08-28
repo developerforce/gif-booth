@@ -4,6 +4,11 @@
   margin-top: 5%;
 }
 
+.gif-warning > h1 {
+  color: #616f84;
+  font-size: 18px;
+}
+
 .gif-warning > *:not(:last-child) {
   margin-bottom: 20px;
 }

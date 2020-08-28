@@ -5,6 +5,7 @@ import './Home.css';
 import useListGIFs from '../../hooks/useListGIFs';
 import { downloadFromS3 } from '../../utils/download';
 import Button from '../../components/Button';
+import Icon from '../../components/Icon';
 import Page from '../../components/Page';
 
 const ListPage = () => {
@@ -38,20 +39,31 @@ const ListPage = () => {
     </>
   );
 
+  const empty = (
+    <div className="gif-warning column">
+      <Icon name="users" size={4} />
+      <h1>No Greetings Recorded Yet</h1>
+      <p>You could be the first!</p>
+    </div>
+  );
+
   return (
     <Page header={header}>
+      {orderedGifs.length === 0 && empty}
       <div className="gif-cards-container">
         <Link to="/new-gif" className="gif-createnew-button">
           <Button icon="plus">Create Your Own GIF</Button>
         </Link>
         {orderedGifs.map(({ Key, src }) => (
-          <img
-            key={Key}
-            onClick={() => downloadFromS3(Key)}
-            src={src}
-            alt={`GIF ${Key}`}
-            className="gif-card-image"
-          />
+          <div className="gif-card-image-container">
+            <img
+              key={Key}
+              onClick={() => downloadFromS3(Key)}
+              src={src}
+              alt={`GIF ${Key}`}
+              className="gif-card-image"
+            />
+          </div>
         ))}
       </div>
     </Page>

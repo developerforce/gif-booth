@@ -2,81 +2,97 @@ const sharp = require('sharp');
 const axios = require('axios');
 const fs = require('fs');
 
-const fetchImg = (url) =>
-  axios({
-    url,
-    responseType: 'arraybuffer',
-  });
+const fetchImg = async (url) => {
+  try {
+    const res = await axios({
+      url,
+      responseType: 'arraybuffer',
+    });
+    return res;
+  } catch (e) {
+    return null;
+  }
+};
 
-const fetchImgs = (imgs) => Promise.all(imgs.map(fetchImg));
+const chunkArray = (array, size) => {
+  if (!array) return [];
+  const firstChunk = array.slice(0, size); // create the first chunk of the given array
+  if (!firstChunk.length) {
+    return array; // this is the base case to terminal the recursive
+  }
+  return [firstChunk].concat(chunkArray(array.slice(size, array.length), size));
+};
 
-const createLayout = (urls) => {
+const fetchImgs = async (imgs) => {
+  const fetched = await Promise.all(imgs.map(fetchImg));
+  return fetched.filter((img) => img !== null);
+};
+
+const createLayout = (imgs) => {
   const aspectRatio = 1 + 1 / 3; // width / height (is determined by actual size of webcam element in the FE)
 
-  const count = urls.length;
+  const count = imgs.length;
 
-  const gridWidth = 1200;
-  let gridLength = Math.ceil(Math.sqrt(count));
+  const idealGridWidth = 1200;
+  const rowCount = Math.ceil(Math.sqrt(count));
 
-  const imgWidth = gridWidth / gridLength;
-  const imgHeight = imgWidth / aspectRatio;
+  const chunkedImgs = chunkArray(imgs, rowCount);
+  const colCount = chunkedImgs.length;
 
-  const gridHeight = Math.ceil(count / gridLength) * imgHeight;
+  const imgWidth = Math.round(idealGridWidth / rowCount); // these need to be an integer
+  const imgHeight = Math.round(imgWidth / aspectRatio);
+
+  const gridWidth = imgWidth * rowCount;
+  const gridHeight = colCount * imgHeight;
 
   let top = 0;
-  let left = 0;
+  const imgMap = chunkedImgs.map((row) => {
+    let left = 0;
+    const rowMap = row.map((img) => {
+      const imgSpecs = {
+        top: 0,
+        left,
+        width: imgWidth,
+        height: imgHeight,
+        img,
+      };
 
-  const imgMap = urls.map(() => {
-    const specs = { top, left, width: imgWidth, height: imgHeight };
-    left = left + imgWidth;
-    if (left === imgWidth * gridLength) {
-      left = 0;
-      top = top + imgHeight;
-    }
+      left = left + imgWidth;
 
-    return specs;
+      return imgSpecs;
+    });
+
+    const rowSpecs = {
+      top,
+      left: 0,
+      width: imgWidth * row.length,
+      height: imgHeight,
+      imgs: rowMap,
+    };
+
+    top = top + imgHeight;
+
+    return rowSpecs;
   });
 
   return {
     height: gridHeight,
     width: gridWidth,
+    rowCount,
+    imgWidth,
+    imgHeight,
     imgMap,
   };
 };
 
-const stitchImgs = async (urls) => {
-  const { width, height, imgMap } = createLayout(urls);
-
-  const imgs = await fetchImgs(urls);
-
-  const inputs = await Promise.all(
-    imgs.map(async (img, i) => {
-      const { top, left, width, height } = imgMap[i];
-      const loaded = await sharp(img.data);
-      const input = await loaded.resize(width, height).raw().toBuffer();
-      return {
-        input,
-        raw: { width, height, channels: 4 },
-        top,
-        left,
-      };
-    })
-  );
-
-  const stitched = await sharp({
-    create: { height, width, channels: 4, background: '#EDF2F7' },
-  }).composite(inputs);
-
-  return stitched;
-};
-
-const addBranding = async (contentImg) => {
+const createGroupPhoto = async (urls) => {
   const padding = 16;
   const brandingHeight = 80;
   const conferenceOutputPath = './temp/conference_logo.png';
 
-  const contentMetadata = await contentImg.metadata();
-  const contentInput = await contentImg.raw().toBuffer();
+  const imgs = await fetchImgs(urls);
+
+  const { width, height, imgMap } = createLayout(imgs);
 
   await sharp('./uploads/CascadiaJS.png')
     .resize(null, brandingHeight)
@@ -84,41 +100,93 @@ const addBranding = async (contentImg) => {
   const imgLogo = await sharp(conferenceOutputPath);
   const logoMetadata = await imgLogo.metadata();
 
-  const brandedWidth = contentMetadata.width + padding * 2;
+  const totalWidth = width + padding * 2;
+  const totalHeight = height + logoMetadata.height + padding * 3;
 
-  const branded = await sharp({
+  const inputs = await Promise.all(
+    imgMap.map(async (row) => {
+      const inputs = await Promise.all(
+        row.imgs.map(async (img) => {
+          const loaded = await sharp(img.img.data);
+          const input = await loaded
+            .resize(img.width, img.height)
+            .raw()
+            .toBuffer();
+
+          return {
+            input,
+            raw: { width: img.width, height: img.height, channels: 4 },
+            top: img.top,
+            left: img.left,
+          };
+        })
+      );
+
+      const rowInput = await sharp({
+        create: {
+          height: row.height,
+          width: row.width,
+          background: '#FFF',
+          channels: 3,
+        },
+      })
+        .composite(inputs)
+        .raw()
+        .toBuffer();
+
+      return {
+        input: rowInput,
+        raw: { width: row.width, height: row.height, channels: 4 },
+        top: row.top + padding,
+        left: row.left + padding,
+      };
+    })
+  );
+
+  const groupPhoto = await sharp({
     create: {
-      width: brandedWidth,
-      height: contentMetadata.height + logoMetadata.height + padding * 3,
-      channels: 4,
+      height: totalHeight,
+      width: totalWidth,
+      channels: 3,
       background: 'white',
     },
   }).composite([
     {
-      input: contentInput,
-      raw: {
-        width: contentMetadata.width,
-        height: contentMetadata.height,
-        channels: 4,
+      input: {
+        create: {
+          height,
+          width,
+          background: '#EDF2F7',
+          channels: 3,
+        },
       },
       top: padding,
       left: padding,
     },
+    ...inputs,
     {
       input: conferenceOutputPath,
-      top: contentMetadata.height + padding * 2,
-      left: Math.floor(brandedWidth / 2 - logoMetadata.width / 2),
+      top: height + padding * 2,
+      left: Math.floor(totalWidth / 2 - logoMetadata.width / 2),
     },
   ]);
 
-  return branded;
+  return groupPhoto;
 };
 
 const createGroupPhotoStream = async (urls) => {
-  const stitched = await stitchImgs(urls);
-  const groupPhoto = await addBranding(stitched);
-  await groupPhoto.toFile('./temp/group-photo.png');
-  return fs.createReadStream('./temp/group-photo.png');
+  try {
+    const groupPhoto = await createGroupPhoto(urls);
+    console.log('groupPhoto');
+    const png = await groupPhoto.png({
+      compressionLevel: 5,
+      quality: 100,
+    });
+    await png.toFile('./temp/group-photo.png');
+    return fs.createReadStream('./temp/group-photo.png');
+  } catch (e) {
+    console.log(e);
+  }
 };
 
 module.exports = { createGroupPhotoStream };

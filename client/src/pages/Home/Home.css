@@ -3,6 +3,7 @@
   bottom: 118px;
   left: 50%;
   margin-left: -150px;
+  z-index: 10;
 }
 
 h1 > h2 {
@@ -17,11 +18,18 @@ h1 > h2 {
   width: 300px;
 }
 
+.gif-card-image-container {
+  position: relative;
+  background: #edf2f7;
+  border-radius: 12px;
+  overflow: hidden;
+  z-index: 0;
+}
+
 .gif-card-image {
   width: 100%;
   min-height: 100%;
   object-fit: cover;
-  border-radius: 12px;
   cursor: pointer;
 }
 
