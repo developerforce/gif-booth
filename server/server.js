@@ -26,6 +26,9 @@ if (process.env.NODE_ENV === 'production') {
   app.get('/new-gif', (req, res) =>
     res.sendFile(path.join(__dirname, '../client/build', 'index.html'))
   );
+  app.get('/group-photo', (req, res) =>
+    res.sendFile(path.join(__dirname, '../client/build', 'index.html'))
+  );
 }
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
