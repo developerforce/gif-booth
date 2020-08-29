@@ -33,7 +33,7 @@ const createLayout = (imgs) => {
 
   const count = imgs.length;
 
-  const idealGridWidth = 1200;
+  const idealGridWidth = 2000;
   const rowCount = Math.ceil(Math.sqrt(count));
 
   const chunkedImgs = chunkArray(imgs, rowCount);
@@ -177,12 +177,13 @@ const createGroupPhoto = async (urls) => {
 const createGroupPhotoStream = async (urls) => {
   try {
     const groupPhoto = await createGroupPhoto(urls);
-    console.log('groupPhoto');
+    console.log('Group Photo Processed');
     const png = await groupPhoto.png({
       compressionLevel: 5,
       quality: 100,
     });
     await png.toFile('./temp/group-photo.png');
+    console.log('Group Photo Output to /temp');
     return fs.createReadStream('./temp/group-photo.png');
   } catch (e) {
     console.log(e);

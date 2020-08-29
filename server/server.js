@@ -11,6 +11,8 @@ const { createGroupPhotoStream } = require('./utils/group-photo');
 // const s3URL = 'https://bucketeer-7dcba73d-2692-4191-be53-1b4e69bfff3d.s3.amazonaws.com/';
 const s3URL = 'https://gif-app-test.s3.us-east-2.amazonaws.com/';
 
+const makeFileLocation = (file) => `${s3URL}${file.Key}`;
+
 if (process.env.NODE_ENV !== 'production') require('dotenv').config();
 
 const s3 = new AWS.S3({
@@ -47,26 +49,43 @@ const upload = multer({ storage });
 
 const GREETING_PREFIX = 'gifs/greeting-';
 
-const listGifs = async (MaxKeys) => {
+const listGifs = async () => {
   try {
     const params = {
       Bucket: process.env.BUCKETEER_BUCKET_NAME,
       Prefix: GREETING_PREFIX,
-      MaxKeys,
     };
-    const result = await s3.listObjects(params).promise();
-    result.Contents = result.Contents.map((file) => ({
+
+    const getAllContents = async (PrevContents = [], NextContinuationToken) => {
+      const result = await s3
+        .listObjectsV2({
+          ...params,
+          ...(NextContinuationToken
+            ? { ContinuationToken: NextContinuationToken }
+            : {}),
+        })
+        .promise();
+      const Contents = [...PrevContents, ...result.Contents];
+      return result.NextContinuationToken
+        ? getAllContents(Contents, result.NextContinuationToken)
+        : Contents;
+    };
+
+    const Contents = await getAllContents();
+
+    const OrderedContents = Contents.map((file) => ({
       ...file,
-      src: `${s3URL}${file.Key}`,
-    }));
-    return result;
+      Location: makeFileLocation(file),
+    })).reverse();
+
+    return OrderedContents;
   } catch (e) {
     console.log(e);
   }
 };
 
 app.get('/listGifs', async (_, res) => {
-  const result = await listGifs(50);
+  const result = await listGifs();
   res.send(result);
 });
 
@@ -78,7 +97,7 @@ app.post('/getGroupPhoto', async (_, res) => {
   const result = await s3.listObjects(params).promise();
   result.Contents = result.Contents.map((file) => ({
     ...file,
-    Location: `${s3URL}${file.Key}`,
+    Location: makeFileLocation(file),
   }));
   res.send(result);
 });
@@ -86,7 +105,7 @@ app.post('/getGroupPhoto', async (_, res) => {
 app.post('/createGroupPhoto', async (_, res) => {
   const result = await listGifs();
   try {
-    const urls = result.Contents.map((gif) => `${s3URL}${gif.Key}`);
+    const urls = result.map((file) => makeFileLocation(file));
     const stream = await createGroupPhotoStream(urls);
     const params = {
       Key: 'group_photo.png',

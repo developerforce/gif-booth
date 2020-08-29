@@ -48,7 +48,6 @@ h1 > h2 {
   }
 }
 
-
 @media (min-width: 940px) {
   .gif-cards-container {
     grid-template-columns: repeat(4, auto);
