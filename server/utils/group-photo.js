@@ -16,10 +16,8 @@ const fetchImg = async (url) => {
 
 const chunkArray = (array, size) => {
   if (!array) return [];
-  const firstChunk = array.slice(0, size); // create the first chunk of the given array
-  if (!firstChunk.length) {
-    return array; // this is the base case to terminal the recursive
-  }
+  const firstChunk = array.slice(0, size);
+  if (!firstChunk.length) return array;
   return [firstChunk].concat(chunkArray(array.slice(size, array.length), size));
 };
 
