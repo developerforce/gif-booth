@@ -1,9 +1,6 @@
 {
   "name": "makegif",
   "version": "1.0.0",
-  "engines": {
-    "node": "13.0.1"
-  },
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -19,7 +16,6 @@
   "dependencies": {
     "aws-sdk": "^2.729.0",
     "axios": "^0.20.0",
-    "classnames": "^2.2.6",
     "concurrently": "^5.2.0",
     "express": "^4.17.1",
     "fluent-ffmpeg": "^2.1.2",

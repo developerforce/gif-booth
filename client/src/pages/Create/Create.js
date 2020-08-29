@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import 'spinkit/css/spinkit.css';
 import download from 'downloadjs';
 import { Link } from 'react-router-dom';
 import './Create.css';
