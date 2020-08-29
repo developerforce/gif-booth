@@ -6,10 +6,8 @@ const fs = require('fs');
 const AWS = require('aws-sdk');
 const { createGroupPhotoStream } = require('./utils/group-photo');
 
-// BEFORE MERGING LOOK HERE!!!!!!
-// this needs to be replaced when dev is over here and in usePhotos.js:
-// const s3URL = 'https://bucketeer-7dcba73d-2692-4191-be53-1b4e69bfff3d.s3.amazonaws.com/';
-const s3URL = 'https://gif-app-test.s3.us-east-2.amazonaws.com/';
+const s3URL =
+  'https://bucketeer-7dcba73d-2692-4191-be53-1b4e69bfff3d.s3.amazonaws.com/';
 
 const makeFileLocation = (file) => `${s3URL}${file.Key}`;
 
