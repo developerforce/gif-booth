@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import 'spinkit/css/spinkit.css';
 import download from 'downloadjs';
 import { Link } from 'react-router-dom';
@@ -38,12 +38,12 @@ function Create({ history }) {
     setWarning(false);
   };
 
-  const handleError = (error) => {
+  const handleError = useCallback((error) => {
     console.error('Error:', error);
     setWarning(WARNING_GENERIC);
-  };
+  }, [setWarning]);
 
-  const createGIF = (callback) => {
+  const createGIF = useCallback((callback) => {
     let formData = new FormData();
     const fontsize = text.length && 340 / text.length;
     formData.append('text', text);
@@ -62,12 +62,12 @@ function Create({ history }) {
         if (callback) callback();
       })
       .catch(handleError);
-  };
+  }, [setImageUrl, handleError, text, videoId]);
 
   useEffect(() => {
     if (!videoId) return;
     createGIF();
-  }, [videoId]);
+  }, [videoId, createGIF]);
 
   const upload = () => {
     setUploading(true);

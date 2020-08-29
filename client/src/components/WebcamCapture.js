@@ -43,7 +43,7 @@ const WebcamStreamCapture = ({
   }, [webcamRef, setCapturing, mediaRecorderRef, handleDataAvailable]);
 
   const handleStopCaptureClick = useCallback(() => {
-    mediaRecorderRef.current.stop();
+    if (mediaRecorderRef.current instanceof MediaRecorder) mediaRecorderRef.current.stop();
     setCapturing(false);
   }, [mediaRecorderRef, setCapturing]);
 
