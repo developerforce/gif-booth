@@ -71,21 +71,3 @@ const Home = () => {
 };
 
 export default Home;
-
-// DELETE METHOD
-// const deleteObj = (filename) => {
-// 	const formData = { filename };
-// 	fetch("/deleteObj", {
-// 		method: "delete", // or 'PUT'
-// 		body: JSON.stringify(formData),
-// 		headers: {
-// 			"Content-Type": "application/json",
-// 		},
-// 	})
-// 		.then((res) => res.json())
-// 		.then((response) => {
-// 			console.log("Success:", response);
-// 			loadGifs();
-// 		})
-// 		.catch((error) => console.error("Error:", error));
-// };
