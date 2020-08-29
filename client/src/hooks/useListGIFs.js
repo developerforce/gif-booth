@@ -39,7 +39,7 @@ export default function useListGIFs() {
     prevPage,
     pageCount,
     start: start + 1,
-    end: start + itemsPerPage,
+    end: nextPage ? start + itemsPerPage : gifCount,
     isLoading,
   };
 }
