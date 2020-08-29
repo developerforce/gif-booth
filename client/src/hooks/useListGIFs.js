@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 
 const itemsPerPage = 20;
 
+let loadingTimeout;
+
 export default function useListGIFs() {
   const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState([]);
@@ -11,8 +13,19 @@ export default function useListGIFs() {
 
   const pageCount = Math.ceil(gifCount / itemsPerPage);
 
-  const prevPage = page > 1 ? () => setPage(page - 1) : null;
-  const nextPage = page < pageCount ? () => setPage(page + 1) : null;
+  const createIncrement = (condition, difference) => {
+    if (!condition) return null;
+    return () => {
+      if (loadingTimeout) clearTimeout(loadingTimeout);
+      if (!isLoading) setIsLoading(true);
+      setPage(page + difference);
+      // setting a delay on loading the images on incriment here so we don't spam img requests
+      loadingTimeout = setTimeout(() => setIsLoading(false), 500);
+    };
+  };
+
+  const prevPage = createIncrement(page > 1, -1);
+  const nextPage = createIncrement(page < pageCount, 1);
 
   const start = (page - 1) * itemsPerPage;
   const gifs = data.slice(start, start + itemsPerPage);

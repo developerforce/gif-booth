@@ -62,7 +62,13 @@ const Home = () => {
             key={Key}
             className="gif-card-image-container"
           >
-            <img src={Location} alt={`GIF ${Key}`} className="gif-card-image" />
+            {!isLoading && (
+              <img
+                src={Location}
+                alt={`GIF ${Key}`}
+                className="gif-card-image"
+              />
+            )}
           </div>
         ))}
       </div>
