@@ -6,17 +6,19 @@ import Home from './pages/Home';
 import GroupPhoto from './pages/GroupPhoto';
 import Lost from './pages/Lost';
 import * as serviceWorker from './serviceWorker';
-import { BrowserRouter, Route, Redirect } from 'react-router-dom';
+import { BrowserRouter, Route, Redirect, Switch } from 'react-router-dom';
 
 ReactDOM.render(
   <BrowserRouter>
-    <Route exact path="/home" component={Home} />
-    <Route exact path="/new-gif" component={Create} />
-    <Route exact path="/group-photo" component={GroupPhoto} />
-    <Route exact path="/">
-      <Redirect to="/home" />
-    </Route>
-    <Route component={Lost} />
+    <Switch>
+      <Route exact path="/home" component={Home} />
+      <Route exact path="/new-gif" component={Create} />
+      <Route exact path="/group-photo" component={GroupPhoto} />
+      <Route exact path="/">
+        <Redirect to="/home" />
+      </Route>
+      <Route component={Lost} />
+    </Switch>
   </BrowserRouter>,
   document.getElementById('root')
 );
