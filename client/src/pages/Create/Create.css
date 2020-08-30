@@ -1,3 +1,7 @@
+.gif-create > .gif-warning {
+  margin-top: 5%;
+}
+
 .gif-create-content {
   width: 100%;
   align-items: center;
@@ -19,19 +23,19 @@ textarea {
   min-height: 68px;
   border-radius: 12px;
   padding: 12px;
-  border: 1px solid #A0AEC0;
+  border: 1px solid #a0aec0;
   font-size: 14px;
   font-weight: 500;
-  color: #2A4365;
+  color: #2a4365;
   resize: vertical;
 }
 
 textarea:hover::placeholder {
-  color: #2A4365;
+  color: #2a4365;
 }
 
 textarea:focus::placeholder {
-  color: #2A4365;
+  color: #2a4365;
 }
 
 textarea::placeholder {

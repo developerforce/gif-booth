@@ -12,9 +12,10 @@ const Warning = ({
   ctaOnClick,
   ctaIcon,
   ctaDisabled,
+  warningIcon,
 }) => (
   <div className="gif-warning column">
-    <Icon name="exclamation-triangle" size={4} />
+    <Icon name={warningIcon} size={4} />
     <h1>{title}</h1>
     <p>{message}</p>
     {content}
@@ -38,6 +39,7 @@ Warning.propTypes = {
   ctaOnClick: PropTypes.func,
   ctaIcon: PropTypes.string,
   ctaDisabled: PropTypes.bool,
+  warningIcon: PropTypes.string,
 };
 
 Warning.defaultProps = {
@@ -46,6 +48,7 @@ Warning.defaultProps = {
   ctaOnClick: null,
   ctaIcon: null,
   ctaDisabled: false,
+  warningIcon: 'exclamation-triangle',
 };
 
 export default Warning;

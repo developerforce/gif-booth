@@ -1,5 +1,5 @@
 #root {
-  min-height: 100vh;
+  height: 100vh;
 }
 
 html {
@@ -21,6 +21,14 @@ html {
 .column {
   display: flex;
   flex-direction: column;
+}
+
+.full-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
 }
 
 body {

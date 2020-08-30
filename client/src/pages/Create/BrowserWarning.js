@@ -17,7 +17,7 @@ const BrowserWarning = () => {
       method: 'POST',
       body: formData,
     });
-    if (res.ok) history.push('/');
+    if (res.ok) history.push('/home');
   };
 
   return (

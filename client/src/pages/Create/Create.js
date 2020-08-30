@@ -77,7 +77,7 @@ function Create({ history }) {
         'Content-Type': 'application/json',
       },
     })
-      .then(() => history.push('/'))
+      .then(() => history.push('/home'))
       .catch(handleError);
   };
 
