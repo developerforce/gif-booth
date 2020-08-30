@@ -18,19 +18,14 @@ h1 > h2 {
   width: 300px;
 }
 
-.gif-card-image-container {
-  position: relative;
+.gif-card-image {
   background: #edf2f7;
   border-radius: 12px;
-  overflow: hidden;
-  z-index: 0;
-}
-
-.gif-card-image {
   width: 100%;
-  min-height: 100%;
+  height: auto;
   object-fit: cover;
   cursor: pointer;
+  z-index: 0;
 }
 
 .gif-cards-container {

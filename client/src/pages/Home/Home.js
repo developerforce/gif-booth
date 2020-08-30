@@ -57,19 +57,15 @@ const Home = () => {
           <Button icon="plus">Create Your Own GIF</Button>
         </Link>
         {gifs.map(({ Key, Location }) => (
-          <div
+          <img
             onClick={() => downloadFromS3(Key)}
             key={Key}
-            className="gif-card-image-container"
-          >
-            {!isLoading && (
-              <img
-                src={Location}
-                alt={`GIF ${Key}`}
-                className="gif-card-image"
-              />
-            )}
-          </div>
+            src={Location}
+            alt={`GIF ${Key}`}
+            className="gif-card-image"
+            width="320"
+            height="240"
+          />
         ))}
       </div>
     </Page>
