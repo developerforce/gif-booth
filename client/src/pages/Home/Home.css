@@ -6,6 +6,18 @@
   z-index: 10;
 }
 
+.gif-home-paginate {
+
+}
+
+.gif-home-paginate li {
+  list-style: none;
+}
+
+.gif-home-paginate > *:not(:last-child) {
+  margin-right: 4px;
+}
+
 h1 > h2 {
   display: inline;
 }

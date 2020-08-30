@@ -99,13 +99,21 @@ a {
 }
 
 .gif-button-2 {
-  margin-right: 8px;
   padding: 8px;
   font-weight: 600;
   font-size: 14px;
   height: min-content;
   border-radius: 6px;
   color: #718096;
+}
+
+.gif-button-2.inline {
+  padding: 0;
+  transition: color 150ms ease-in-out;
+}
+
+.gif-button-2.active.inline {
+  padding: 4px 6px;
 }
 
 .gif-button-2 > i {

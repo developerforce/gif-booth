@@ -4,6 +4,7 @@ import cx from 'classnames';
 import './Home.css';
 import useListGIFs from '../../hooks/useListGIFs';
 import { downloadFromS3 } from '../../utils/download';
+import ReactPaginate from 'react-paginate';
 import Button from '../../components/Button';
 import Icon from '../../components/Icon';
 import Page from '../../components/Page';
@@ -12,31 +13,35 @@ const Home = () => {
   const {
     gifCount,
     gifs,
-    nextPage,
-    prevPage,
+    page,
+    pageCount,
     start,
+    setPage,
     end,
     isLoading,
+    isInitializing,
   } = useListGIFs();
 
   const header = (
     <>
       <span>
         <h1>Browse GIFs</h1>
-        <h2>{` ${start}-${end} (${gifCount || 0})`}</h2>
+        {!isInitializing && <h2>{` ${start}-${end} (${gifCount || 0})`}</h2>}
       </span>
-      <div className="gif-home-order row">
-        {prevPage && (
-          <button className={cx('gif-button-2')} onClick={prevPage}>
-            Prev
-          </button>
-        )}
-        {nextPage && (
-          <button className={cx('gif-button-2')} onClick={nextPage}>
-            Next
-          </button>
-        )}
-      </div>
+      {!isInitializing && (
+        <ReactPaginate
+          containerClassName="gif-home-paginate row"
+          pageCount={pageCount}
+          forcePage={page}
+          activeLinkClassName="active"
+          nextLinkClassName="gif-button-2"
+          previousLinkClassName="gif-button-2"
+          pageLinkClassName="gif-button-2 inline"
+          previousLabel="Prev"
+          onPageChange={({ selected }) => setPage(selected)}
+          marginPagesDisplayed={1}
+        />
+      )}
     </>
   );
 
