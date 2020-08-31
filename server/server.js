@@ -7,7 +7,7 @@ const AWS = require('aws-sdk');
 const { createGroupPhotoStream } = require('./utils/group-photo');
 
 const s3URL =
-  'https://bucketeer-7dcba73d-2692-4191-be53-1b4e69bfff3d.s3.amazonaws.com/';
+  'https://bucketeer-e4e825bf-aa1f-465b-9c47-9fa75796912e.s3.amazonaws.com';
 
 const makeFileLocation = (file) => `${s3URL}${file.Key}`;
 
@@ -48,7 +48,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-const GREETING_PREFIX = 'gifs/greeting-';
+const GREETING_PREFIX = 'public/gifs/greeting-';
 
 const listGifs = async () => {
   try {
@@ -93,7 +93,7 @@ app.get('/listGifs', async (_, res) => {
 app.post('/getGroupPhoto', async (_, res) => {
   const params = {
     Bucket: process.env.BUCKETEER_BUCKET_NAME,
-    Prefix: 'group_photo.png',
+    Prefix: 'public/group_photo.png',
   };
   const result = await s3.listObjects(params).promise();
   result.Contents = result.Contents.map((file) => ({
@@ -109,7 +109,7 @@ app.post('/createGroupPhoto', async (_, res) => {
     const urls = result.map((file) => makeFileLocation(file));
     const stream = await createGroupPhotoStream(urls);
     const params = {
-      Key: 'group_photo.png',
+      Key: 'public/group_photo.png',
       Bucket: process.env.BUCKETEER_BUCKET_NAME,
       Body: stream,
       ContentType: 'image/png',

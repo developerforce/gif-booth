@@ -28,7 +28,7 @@ const Home = () => {
         <h1>Browse GIFs</h1>
         {!isInitializing && <h2>{` ${start}-${end} (${gifCount || 0})`}</h2>}
       </span>
-      {!isInitializing && (
+      {!isInitializing && pageCount > 1 && (
         <ReactPaginate
           containerClassName="gif-home-paginate row"
           pageCount={pageCount}
