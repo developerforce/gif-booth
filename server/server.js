@@ -7,7 +7,7 @@ const AWS = require('aws-sdk');
 const { createGroupPhotoStream } = require('./utils/group-photo');
 
 const s3URL =
-  'https://bucketeer-e4e825bf-aa1f-465b-9c47-9fa75796912e.s3.amazonaws.com';
+  'https://bucketeer-e4e825bf-aa1f-465b-9c47-9fa75796912e.s3.amazonaws.com/';
 
 const makeFileLocation = (file) => `${s3URL}${file.Key}`;
 
