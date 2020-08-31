@@ -2,7 +2,12 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import PropTypes from 'prop-types';
 import Webcam from 'react-webcam';
 
-const WebcamStreamCapture = ({ handleStopCapture, isPlaying, handleError }) => {
+const WebcamStreamCapture = ({
+  handleError,
+  handleLoaded,
+  handleStopCapture,
+  isPlaying,
+}) => {
   const webcamRef = useRef(null);
   const mediaRecorderRef = useRef(null);
   const [capturing, setCapturing] = useState(false);
@@ -62,13 +67,22 @@ const WebcamStreamCapture = ({ handleStopCapture, isPlaying, handleError }) => {
     if (!isPlaying && capturing) handleStopCaptureClick();
   }, [isPlaying, capturing, handleStartCapture, handleStopCaptureClick]);
 
-  return <Webcam className="gif-video" audio={false} ref={webcamRef} />;
+  return (
+    <Webcam
+      className="gif-video"
+      audio={false}
+      ref={webcamRef}
+      onUserMedia={handleLoaded}
+      onUserMediaError={handleError}
+    />
+  );
 };
 
 WebcamStreamCapture.propTypes = {
   handleError: PropTypes.func.isRequired,
   handleStopCapture: PropTypes.func.isRequired,
   isPlaying: PropTypes.bool.isRequired,
+  handleLoaded: PropTypes.func.isRequired,
 };
 
 export default WebcamStreamCapture;

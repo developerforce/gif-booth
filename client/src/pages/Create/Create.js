@@ -22,6 +22,7 @@ const PHASE_END = 'phase_end';
 function Create({ history }) {
   const [phase, setPhase] = useState(PHASE_START);
   const [videoId, setVideoId] = useState();
+  const [isWebcamLoaded, setIsWebcamLoaded] = useState(false);
   const [imageUrl, setImageUrl] = useState();
   const [text, setText] = useState('');
   const [isUploading, setUploading] = useState(false);
@@ -151,9 +152,10 @@ function Create({ history }) {
               />
             ) : (
               <Webcam
+                handleError={() => setWarning(WARNING_GENERIC)}
+                handleLoaded={() => setIsWebcamLoaded(true)}
                 handleStopCapture={handleStopCapture}
                 isPlaying={phase === PHASE_RECORDING}
-                handleError={() => setWarning(WARNING_GENERIC)}
               />
             )}
           </div>
@@ -177,6 +179,7 @@ function Create({ history }) {
               grey={phase === PHASE_COUNTDOWN}
               red={phase === PHASE_RECORDING}
               icon={phase === PHASE_START ? 'play' : 'camera'}
+              disabled={!isWebcamLoaded}
             >
               {phase === PHASE_START && 'Start Recording'}
               {phase === PHASE_COUNTDOWN && 'Get Ready...'}
