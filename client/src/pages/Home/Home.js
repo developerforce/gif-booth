@@ -55,25 +55,28 @@ const Home = () => {
   return (
     <Page header={header} headerClassName="gif-home-header">
       {gifs.length === 0 && !isLoading && empty}
-      {isLoading && <p>Loading GIFs...</p>}
+      {isInitializing && <p>Loading GIFs...</p>}
       <div className="gif-cards-container">
         <div className="gif-home-createnew">
           <Link to="/new-gif" className="gif-createnew-button">
             <Button icon="plus">Create Your Own GIF</Button>
           </Link>
         </div>
-        {!isLoading &&
-          gifs.map(({ Key, Location }) => (
-            <img
-              onClick={() => downloadFromS3(Key)}
-              key={Key}
-              src={Location}
-              alt={`GIF ${Key}`}
-              className="gif-card-image"
-              width="320"
-              height="240"
-            />
-          ))}
+        {gifs.map(({ Key, Location }) => (
+          <div
+            onClick={() => downloadFromS3(Key)}
+            key={Key}
+            alt={`GIF ${Key}`}
+            className="gif-card-image"
+            style={
+              isLoading
+                ? null
+                : {
+                    backgroundImage: `url("${Location}")`,
+                  }
+            }
+          />
+        ))}
       </div>
     </Page>
   );

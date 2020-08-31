@@ -55,9 +55,10 @@ h1 > h2 {
 
 .gif-card-image {
   background: #edf2f7;
+  background-size: cover;
+  background-position: center;
   border-radius: 12px;
-  width: 100%;
-  height: auto;
+  padding-bottom: 75%;
   object-fit: cover;
   cursor: pointer;
   z-index: 0;
@@ -67,14 +68,14 @@ h1 > h2 {
   display: grid;
   justify-content: space-between;
   max-width: 100%;
-  grid-template-columns: repeat(2, auto);
+  grid-template-columns: repeat(2, 50%);
   gap: 4px;
   margin-bottom: 96px !important;
 }
 
 @media (min-width: 560px) {
   .gif-cards-container {
-    grid-template-columns: repeat(3, auto);
+    grid-template-columns: repeat(3, calc(100% / 3));
   }
   .gif-home-header {
     flex-wrap: nowrap;
@@ -86,18 +87,18 @@ h1 > h2 {
 
 @media (min-width: 940px) {
   .gif-cards-container {
-    grid-template-columns: repeat(4, auto);
+    grid-template-columns: repeat(4, 25%);
   }
 }
 
 @media (min-width: 1200px) {
   .gif-cards-container {
-    grid-template-columns: repeat(5, auto);
+    grid-template-columns: repeat(5, 20%);
   }
 }
 
 @media (min-width: 1500px) {
   .gif-cards-container {
-    grid-template-columns: repeat(6, auto);
+    grid-template-columns: repeat(6, calc(100% / 6));
   }
 }
