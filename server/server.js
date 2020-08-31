@@ -6,12 +6,10 @@ const fs = require('fs');
 const AWS = require('aws-sdk');
 const { createGroupPhotoStream } = require('./utils/group-photo');
 
-const s3URL =
-  'https://bucketeer-e4e825bf-aa1f-465b-9c47-9fa75796912e.s3.amazonaws.com/';
-
-const makeFileLocation = (file) => `${s3URL}${file.Key}`;
-
 if (process.env.NODE_ENV !== 'production') require('dotenv').config();
+
+const makeFileLocation = (file) =>
+  `${process.env.BUCKETEER_BUCKET_URL}/${file.Key}`;
 
 const s3 = new AWS.S3({
   accessKeyId: process.env.BUCKETEER_AWS_ACCESS_KEY_ID,
@@ -21,15 +19,19 @@ const s3 = new AWS.S3({
 
 const app = express();
 app.set('port', process.env.PORT || 3001);
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../client/build')));
-  app.get('/new-gif', (req, res) =>
-    res.sendFile(path.join(__dirname, '../client/build', 'index.html'))
-  );
-  app.get('/group-photo', (req, res) =>
-    res.sendFile(path.join(__dirname, '../client/build', 'index.html'))
-  );
-}
+app.use('*', express.static(path.join(__dirname, '../client/build')));
+// if (process.env.NODE_ENV === 'production') {
+//   app.use(express.static(path.join(__dirname, '../client/build')));
+//   app.get('/home', (req, res) =>
+//     res.sendFile(path.join(__dirname, '../client/build', 'index.html'))
+//   );
+//   app.get('/new-gif', (req, res) =>
+//     res.sendFile(path.join(__dirname, '../client/build', 'index.html'))
+//   );
+//   app.get('/group-photo', (req, res) =>
+//     res.sendFile(path.join(__dirname, '../client/build', 'index.html'))
+//   );
+// }
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
