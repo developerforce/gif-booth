@@ -54,7 +54,7 @@ export default function useListGIFs() {
     gifCount: data.length,
     gifs,
     pageCount,
-    start: start + 1,
+    start: gifCount > 0 ? start + 1 : 0,
     end: Math.min(start + itemsPerPage, gifCount),
     isLoading,
     isInitializing,
