@@ -19,19 +19,6 @@ const s3 = new AWS.S3({
 
 const app = express();
 app.set('port', process.env.PORT || 3001);
-app.use('*', express.static(path.join(__dirname, '../client/build')));
-// if (process.env.NODE_ENV === 'production') {
-//   app.use(express.static(path.join(__dirname, '../client/build')));
-//   app.get('/home', (req, res) =>
-//     res.sendFile(path.join(__dirname, '../client/build', 'index.html'))
-//   );
-//   app.get('/new-gif', (req, res) =>
-//     res.sendFile(path.join(__dirname, '../client/build', 'index.html'))
-//   );
-//   app.get('/group-photo', (req, res) =>
-//     res.sendFile(path.join(__dirname, '../client/build', 'index.html'))
-//   );
-// }
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
@@ -183,8 +170,6 @@ app.post('/uploadGIF', ({ body }, res) => {
   });
 });
 
-app.post('/');
-
 app.post('/video2gif', upload.none(), ({ body }, res) => {
   const { videoId, text, fontsize } = body;
   ffmpeg()
@@ -280,6 +265,11 @@ app.delete('/deleteObj', ({ body }, res) => {
     else res.send(data);
   });
 });
+
+app.use(express.static(path.join(__dirname, '../client/build')));
+app.get('/*', (req, res) =>
+  res.sendFile(path.join(__dirname, '../client/build', 'index.html'))
+);
 
 app.listen(app.get('port'), () => {
   console.log(`Find the server at: http://localhost:${app.get('port')}/`);
