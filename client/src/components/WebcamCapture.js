@@ -44,7 +44,7 @@ const WebcamStreamCapture = ({
         console.log(err.toString());
         handleError(err);
       });
-  }, [webcamRef, setCapturing, mediaRecorderRef, handleDataAvailable]);
+  }, [webcamRef, setCapturing, mediaRecorderRef, handleDataAvailable, handleError]);
 
   const handleStopCaptureClick = useCallback(() => {
     if (mediaRecorderRef.current instanceof MediaRecorder)
