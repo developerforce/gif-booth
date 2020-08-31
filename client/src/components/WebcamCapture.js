@@ -74,6 +74,7 @@ const WebcamStreamCapture = ({
       ref={webcamRef}
       onUserMedia={handleLoaded}
       onUserMediaError={handleError}
+      videoConstraints={{ aspectRatio: 1 + 1 / 3 }}
     />
   );
 };
