@@ -1,15 +1,11 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { Toast, ToastHeader } from 'reactstrap';
+import PropTypes from 'prop-types';
 import Webcam from 'react-webcam';
 
-const WebcamStreamCapture = ({
-  handleStopCapture,
-  isPlaying,
-}) => {
+const WebcamStreamCapture = ({ handleStopCapture, isPlaying, handleError }) => {
   const webcamRef = useRef(null);
   const mediaRecorderRef = useRef(null);
   const [capturing, setCapturing] = useState(false);
-  const [errMsg, setErrMsg] = useState();
   const [recordedChunks, setRecordedChunks] = useState([]);
 
   const handleDataAvailable = useCallback(
@@ -39,11 +35,15 @@ const WebcamStreamCapture = ({
         );
         mediaRecorderRef.current.start();
       })
-      .catch((err) => setErrMsg(err.toString()));
+      .catch((err) => {
+        console.log(err.toString());
+        handleError(err);
+      });
   }, [webcamRef, setCapturing, mediaRecorderRef, handleDataAvailable]);
 
   const handleStopCaptureClick = useCallback(() => {
-    if (mediaRecorderRef.current instanceof MediaRecorder) mediaRecorderRef.current.stop();
+    if (mediaRecorderRef.current instanceof MediaRecorder)
+      mediaRecorderRef.current.stop();
     setCapturing(false);
   }, [mediaRecorderRef, setCapturing]);
 
@@ -62,16 +62,13 @@ const WebcamStreamCapture = ({
     if (!isPlaying && capturing) handleStopCaptureClick();
   }, [isPlaying, capturing, handleStartCapture, handleStopCaptureClick]);
 
-  return (
-    <>
-      <Webcam className="gif-video" audio={false} ref={webcamRef} />
-      {errMsg && (
-        <Toast>
-          <ToastHeader icon="danger">{errMsg}</ToastHeader>
-        </Toast>
-      )}
-    </>
-  );
+  return <Webcam className="gif-video" audio={false} ref={webcamRef} />;
+};
+
+WebcamStreamCapture.propTypes = {
+  handleError: PropTypes.func.isRequired,
+  handleStopCapture: PropTypes.func.isRequired,
+  isPlaying: PropTypes.bool.isRequired,
 };
 
 export default WebcamStreamCapture;

@@ -37,31 +37,37 @@ function Create({ history }) {
     setWarning(false);
   };
 
-  const handleError = useCallback((error) => {
-    console.error('Error:', error);
-    setWarning(WARNING_GENERIC);
-  }, [setWarning]);
+  const handleError = useCallback(
+    (error) => {
+      console.error('Error:', error);
+      setWarning(WARNING_GENERIC);
+    },
+    [setWarning]
+  );
 
-  const createGIF = useCallback((callback) => {
-    let formData = new FormData();
-    const fontsize = text.length && 340 / text.length;
-    formData.append('text', text);
-    formData.append('fontsize', fontsize);
-    formData.append('videoId', videoId);
-    fetch('/video2gif', {
-      method: 'POST',
-      body: formData,
-    })
-      .then((res) => res.json())
-      .then((response) => {
-        if (!Object.keys(response).length) {
-          throw Error;
-        }
-        setImageUrl(response.videoId);
-        if (callback) callback();
+  const createGIF = useCallback(
+    (callback) => {
+      let formData = new FormData();
+      const fontsize = text.length && 340 / text.length;
+      formData.append('text', text);
+      formData.append('fontsize', fontsize);
+      formData.append('videoId', videoId);
+      fetch('/video2gif', {
+        method: 'POST',
+        body: formData,
       })
-      .catch(handleError);
-  }, [setImageUrl, handleError, text, videoId]);
+        .then((res) => res.json())
+        .then((response) => {
+          if (!Object.keys(response).length) {
+            throw Error;
+          }
+          setImageUrl(response.videoId);
+          if (callback) callback();
+        })
+        .catch(handleError);
+    },
+    [setImageUrl, handleError, text, videoId]
+  );
 
   useEffect(() => {
     if (!videoId) return;
@@ -147,6 +153,7 @@ function Create({ history }) {
               <Webcam
                 handleStopCapture={handleStopCapture}
                 isPlaying={phase === PHASE_RECORDING}
+                handleError={() => setWarning(WARNING_GENERIC)}
               />
             )}
           </div>
