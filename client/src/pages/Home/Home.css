@@ -50,6 +50,7 @@ h1 > h2 {
 
 .gif-home-createnew button {
   width: 300px;
+  max-width: calc(100vw - 32px);
 }
 
 .gif-card-image {

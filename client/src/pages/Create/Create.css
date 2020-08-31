@@ -9,6 +9,7 @@
 
 .gif-create-content > * {
   width: 384px;
+  max-width: 100%;
 }
 
 .gif-create-content > *:not(:last-child) {
@@ -17,7 +18,7 @@
 
 .gif-video {
   border-radius: 12px;
-  height: 288px;
+  height: auto;
 }
 
 textarea {
@@ -42,4 +43,10 @@ textarea:focus::placeholder {
 textarea::placeholder {
   color: #718096;
   transition: color 150ms ease-in-out;
+}
+
+@media (min-width: 560px) {
+  .gif-video {
+    height: 288px;
+  }
 }
