@@ -104,7 +104,7 @@ a {
   font-size: 14px;
   height: min-content;
   border-radius: 6px;
-  color: #718096;
+  color: #5a7597;
 }
 
 .gif-button-2.inline {
@@ -120,15 +120,16 @@ a {
   height: 12px;
   width: 12px;
   margin-left: 8px;
+  color: #2C5282;
 }
 
 .gif-button-2:hover {
-  color: #2a4365;
+  color: #2A4365;
 }
 
 .gif-button-2.active {
   color: white;
-  background: #718096;
+  background: #2C5282;
   pointer-events: none;
 }
 
@@ -136,7 +137,6 @@ a {
   background: #edf2f7;
   width: 100%;
   border-radius: 12px;
-  min-height: 288px;
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05);
 }
 

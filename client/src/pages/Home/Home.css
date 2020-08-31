@@ -1,13 +1,18 @@
-.gif-createnew-button {
-  position: fixed;
-  bottom: 118px;
-  left: 50%;
-  margin-left: -150px;
-  z-index: 10;
+.gif-home-header {
+  flex-wrap: wrap;
 }
 
 .gif-home-paginate {
+  padding: 0;
+  width: 100%;
+}
 
+.gif-home-paginate > :first-child {
+  padding-right: 8px;
+}
+
+.gif-home-paginate > :last-child {
+  padding-left: 8px;
 }
 
 .gif-home-paginate li {
@@ -26,7 +31,23 @@ h1 > h2 {
   margin-right: 8px;
 }
 
-.gif-createnew-button > button {
+.gif-home-createnew {
+  position: fixed;
+  bottom: 118px;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.gif-home-createnew > * {
+  pointer-events: auto;
+}
+
+.gif-home-createnew button {
   width: 300px;
 }
 
@@ -52,6 +73,12 @@ h1 > h2 {
 @media (min-width: 560px) {
   .gif-cards-container {
     grid-template-columns: repeat(3, auto);
+  }
+  .gif-home-header {
+    flex-wrap: nowrap;
+  }
+  .gif-home-paginate {
+    width: unset;
   }
 }
 

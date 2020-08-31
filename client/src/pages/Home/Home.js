@@ -34,8 +34,8 @@ const Home = () => {
           pageCount={pageCount}
           forcePage={page}
           activeLinkClassName="active"
-          nextLinkClassName="gif-button-2"
-          previousLinkClassName="gif-button-2"
+          nextLinkClassName="gif-button-2 inline"
+          previousLinkClassName="gif-button-2 inline"
           pageLinkClassName="gif-button-2 inline"
           previousLabel="Prev"
           onPageChange={({ selected }) => setPage(selected)}
@@ -54,13 +54,15 @@ const Home = () => {
   );
 
   return (
-    <Page header={header}>
+    <Page header={header} headerClassName="gif-home-header">
       {gifs.length === 0 && !isLoading && empty}
       {isLoading && <p>Loading GIFs...</p>}
       <div className="gif-cards-container">
-        <Link to="/new-gif" className="gif-createnew-button">
-          <Button icon="plus">Create Your Own GIF</Button>
-        </Link>
+        <div className="gif-home-createnew">
+          <Link to="/new-gif" className="gif-createnew-button">
+            <Button icon="plus">Create Your Own GIF</Button>
+          </Link>
+        </div>
         {!isLoading &&
           gifs.map(({ Key, Location }) => (
             <img
