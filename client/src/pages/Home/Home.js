@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import cx from 'classnames';
 import './Home.css';
 import useListGIFs from '../../hooks/useListGIFs';
 import { downloadFromS3 } from '../../utils/download';
