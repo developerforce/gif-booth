@@ -33,7 +33,8 @@ h1 > h2 {
 
 .gif-home-createnew {
   position: fixed;
-  bottom: 118px;
+  bottom: 94px;
+  padding: 20px;
   left: 0;
   width: 100%;
   display: flex;
@@ -67,7 +68,7 @@ h1 > h2 {
   max-width: 100%;
   grid-template-columns: repeat(2, auto);
   gap: 4px;
-  margin: 0px auto;
+  margin-bottom: 96px !important;
 }
 
 @media (min-width: 560px) {
