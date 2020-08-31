@@ -20,18 +20,6 @@ const s3 = new AWS.S3({
 const app = express();
 app.set('port', process.env.PORT || 3001);
 app.use('*', express.static(path.join(__dirname, '../client/build')));
-// if (process.env.NODE_ENV === 'production') {
-//   app.use(express.static(path.join(__dirname, '../client/build')));
-//   app.get('/home', (req, res) =>
-//     res.sendFile(path.join(__dirname, '../client/build', 'index.html'))
-//   );
-//   app.get('/new-gif', (req, res) =>
-//     res.sendFile(path.join(__dirname, '../client/build', 'index.html'))
-//   );
-//   app.get('/group-photo', (req, res) =>
-//     res.sendFile(path.join(__dirname, '../client/build', 'index.html'))
-//   );
-// }
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
