@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import PropTypes from 'prop-types';
-import Webcam from 'react-webcam';
+import React, { useState, useEffect, useCallback, useRef } from "react";
+import PropTypes from "prop-types";
+import Webcam from "react-webcam";
 
 const getAspectRatio = () =>
-  window?.screen?.orientation?.type?.includes('portrait') ? 0.75 : 1 + 1 / 3;
+  window?.screen?.orientation?.type?.includes("portrait") ? 0.75 : 1 + 1 / 3;
 
 const WebcamStreamCapture = ({
   handleError,
@@ -37,10 +37,10 @@ const WebcamStreamCapture = ({
       .then(function success(stream) {
         setCapturing(true);
         mediaRecorderRef.current = new MediaRecorder(webcamRef.current.stream, {
-          mimeType: 'video/webm',
+          mimeType: "video/webm",
         });
         mediaRecorderRef.current.addEventListener(
-          'dataavailable',
+          "dataavailable",
           handleDataAvailable
         );
         mediaRecorderRef.current.start();
@@ -66,7 +66,7 @@ const WebcamStreamCapture = ({
   useEffect(() => {
     if (recordedChunks.length) {
       const blob = new Blob(recordedChunks, {
-        type: 'video/webm',
+        type: "video/webm",
       });
       handleStopCapture(blob);
       setRecordedChunks([]);
@@ -80,17 +80,12 @@ const WebcamStreamCapture = ({
 
   useEffect(() => {
     const applyAspectRatio = () => setAspectRatio(getAspectRatio());
-    window.addEventListener('orientationchange', applyAspectRatio);
-
-    window.screen.orientation.lock('portrait-primary').catch(() => {});
+    window.addEventListener("orientationchange", applyAspectRatio);
+    // window.screen.orientation.lock('portrait-primary').catch(() => {});
 
     return () => {
-      try {
-        window.removeEventListener('orientationchange', applyAspectRatio);
-        window.screen.orientation.unlock();
-      } catch (e) {
-        console.log(e);
-      }
+      window.removeEventListener("orientationchange", applyAspectRatio);
+      // window.screen.orientation.unlo ck();
     };
   }, []);
 
