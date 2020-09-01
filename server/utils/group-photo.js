@@ -92,7 +92,7 @@ const createGroupPhoto = async (urls) => {
 
   const { width, height, imgMap } = createLayout(imgs);
 
-  await sharp('./uploads/CascadiaJS.png')
+  await sharp('./uploads/CascadiaJSLong.png')
     .resize(null, brandingHeight)
     .toFile(conferenceOutputPath);
   const imgLogo = await sharp(conferenceOutputPath);

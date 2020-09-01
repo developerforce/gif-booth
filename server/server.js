@@ -176,8 +176,8 @@ app.post('/video2gif', upload.none(), ({ body }, res) => {
     .input(`uploads/${videoId}.webm`)
     .input('uploads/CascadiaJS.png')
     .complexFilter([
-      '[1]scale=iw*.2:-1[a]',
-      '[0][a]overlay=x=20:y=15[b]',
+      '[1]scale=iw*1:-1[a]',
+      '[0][a]overlay=x=20:y=20[b]',
       '[b]scale=320:-1:flags=lanczos,fps=15[c]',
       {
         filter: 'drawtext',
