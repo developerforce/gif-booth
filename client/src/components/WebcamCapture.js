@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useEffect, useCallback, useRef } from 'react';
 import PropTypes from 'prop-types';
 import Webcam from 'react-webcam';
 
@@ -37,7 +37,6 @@ const WebcamStreamCapture = ({
 }) => {
   const webcamRef = useRef(null);
   const mediaRecorderRef = useRef(null);
-  const [aspectRatio, setAspectRatio] = useState(getAspectRatio());
 
   const startCapture = useCallback(() => {
     if (isMCRecording(mediaRecorderRef)) return;
@@ -78,12 +77,8 @@ const WebcamStreamCapture = ({
   }, [isPlaying, startCapture, stopCapture]);
 
   useEffect(() => {
-    const applyAspectRatio = () => setAspectRatio(getAspectRatio());
-    window.addEventListener('orientationchange', applyAspectRatio);
     prepareMediaRecorder();
     return () => {
-      // tear everything down
-      window.removeEventListener('orientationchange', applyAspectRatio);
       if (mediaRecorderRef?.current)
         mediaRecorderRef.current.removeEventListener(
           'dataavailable',
@@ -99,7 +94,6 @@ const WebcamStreamCapture = ({
       audio={false}
       ref={webcamRef}
       onUserMediaError={onError}
-      videoConstraints={{ aspectRatio }}
     />
   );
 };
