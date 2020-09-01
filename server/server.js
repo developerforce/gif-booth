@@ -1,20 +1,28 @@
 const express = require('express');
+const basicAuth = require('express-basic-auth');
 const ffmpeg = require('fluent-ffmpeg');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const AWS = require('aws-sdk');
+const config = require('../config');
 const { createGroupPhotoStream } = require('./utils/group-photo');
 
 if (process.env.NODE_ENV !== 'production') require('dotenv').config();
 
 const makeFileLocation = (file) =>
-  `${process.env.BUCKETEER_BUCKET_URL}/${file.Key}`;
+  `${config.BUCKET_URL}/${file.Key}`;
 
 const s3 = new AWS.S3({
-  accessKeyId: process.env.BUCKETEER_AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.BUCKETEER_AWS_SECRET_ACCESS_KEY,
-  region: 'us-east-1',
+  accessKeyId: config.AWS_ACCESS_KEY_ID,
+  secretAccessKey: config.AWS_SECRET_ACCESS_KEY,
+  region: config.AWS_REGION
+});
+
+const auth = basicAuth({
+  users: {
+    [config.AUTH_USERNAME]: config.AUTH_PASSWORD
+  }
 });
 
 const app = express();
@@ -32,7 +40,7 @@ const storage = multer.diskStorage({
       filename = `${Date.now()}.webm`;
     }
     cb(null, filename);
-  },
+  }
 });
 
 const upload = multer({ storage });
@@ -42,8 +50,8 @@ const GREETING_PREFIX = 'public/gifs/greeting-';
 const listGifs = async () => {
   try {
     const params = {
-      Bucket: process.env.BUCKETEER_BUCKET_NAME,
-      Prefix: GREETING_PREFIX,
+      Bucket: config.BUCKET_NAME,
+      Prefix: GREETING_PREFIX
     };
 
     const getAllContents = async (PrevContents = [], NextContinuationToken) => {
@@ -52,7 +60,7 @@ const listGifs = async () => {
           ...params,
           ...(NextContinuationToken
             ? { ContinuationToken: NextContinuationToken }
-            : {}),
+            : {})
         })
         .promise();
       const Contents = [...PrevContents, ...result.Contents];
@@ -65,7 +73,7 @@ const listGifs = async () => {
 
     const OrderedContents = Contents.map((file) => ({
       ...file,
-      Location: makeFileLocation(file),
+      Location: makeFileLocation(file)
     })).reverse();
 
     return OrderedContents;
@@ -81,13 +89,13 @@ app.get('/listGifs', async (_, res) => {
 
 app.post('/getGroupPhoto', async (_, res) => {
   const params = {
-    Bucket: process.env.BUCKETEER_BUCKET_NAME,
-    Prefix: 'public/group_photo.png',
+    Bucket: config.BUCKET_NAME,
+    Prefix: 'public/group_photo.png'
   };
   const result = await s3.listObjects(params).promise();
   result.Contents = result.Contents.map((file) => ({
     ...file,
-    Location: makeFileLocation(file),
+    Location: makeFileLocation(file)
   }));
   res.send(result);
 });
@@ -99,15 +107,14 @@ app.post('/createGroupPhoto', async (_, res) => {
     const stream = await createGroupPhotoStream(urls);
     const params = {
       Key: 'public/group_photo.png',
-      Bucket: process.env.BUCKETEER_BUCKET_NAME,
+      Bucket: config.BUCKET_NAME,
       Body: stream,
       ContentType: 'image/png',
-      ACL: 'public-read',
+      ACL: 'public-read'
     };
     s3.upload(params, (err, data) => {
       if (err) {
         console.log(err, err.stack);
-        return;
       } else {
         data.LastModified = Date.now();
         res.send(data);
@@ -124,10 +131,10 @@ const uploadGIF = async (res, filename, folderName, onSuccess) => {
 
   const params = {
     Key: `${GREETING_PREFIX}${Date.now()}.gif`,
-    Bucket: process.env.BUCKETEER_BUCKET_NAME,
+    Bucket: config.BUCKET_NAME,
     Body: fileStream,
     ContentType: 'image/gif',
-    ACL: 'public-read',
+    ACL: 'public-read'
   };
 
   await s3
@@ -141,7 +148,7 @@ const uploadGIF = async (res, filename, folderName, onSuccess) => {
     })
     .catch((e) => {
       console.log(e, e.stack);
-      res.status(500).send(err);
+      res.status(500).send(e);
     });
 };
 
@@ -150,7 +157,7 @@ app.post('/uploadUserGIF', upload.single('gif'), async (req, res) => {
   if (!gif) {
     res.status(400).send({
       status: false,
-      data: 'No file is selected.',
+      data: 'No file is selected.'
     });
   } else {
     const filename = gif.filename.replace('.gif', '');
@@ -189,10 +196,10 @@ app.post('/video2gif', upload.none(), ({ body }, res) => {
           y: '(h-text_h)*.95',
           shadowcolor: 'black',
           shadowx: 2,
-          shadowy: 2,
+          shadowy: 2
         },
-        inputs: 'c',
-      },
+        inputs: 'c'
+      }
     ])
     .on('end', () => {
       res.send(body);
@@ -210,7 +217,7 @@ app.post('/uploadBlob', upload.single('video'), ({ file }, res) => {
     .screenshots({
       timestamps: [0],
       filename,
-      size: '320x240',
+      size: '320x240'
     })
     .on('end', () => {
       res.send(file);
@@ -225,7 +232,7 @@ app.get('/img', (req, res) => {
   const ext = filename.split('/').pop();
   const head = {
     'Content-Length': fileSize,
-    'Content-Type': `image/${ext}`,
+    'Content-Type': `image/${ext}`
   };
   res.writeHead(200, head);
   fs.createReadStream(path).pipe(res);
@@ -243,8 +250,8 @@ app.get('/download', (req, res) => {
 app.get('/s3-download', async (req, res) => {
   const { filename } = req.query;
   const params = {
-    Bucket: process.env.BUCKETEER_BUCKET_NAME,
-    Key: filename,
+    Bucket: config.BUCKET_NAME,
+    Key: filename
   };
   s3.getObject(params, (err, data) => {
     if (err) console.log(err, err.stack);
@@ -254,11 +261,11 @@ app.get('/s3-download', async (req, res) => {
   });
 });
 
-app.delete('/deleteObj', ({ body }, res) => {
+app.delete('/deleteObj', auth, ({ body }, res) => {
   const { filename } = body;
   const params = {
-    Bucket: process.env.BUCKETEER_BUCKET_NAME,
-    Key: filename,
+    Bucket: config.BUCKET_NAME,
+    Key: filename
   };
   s3.deleteObject(params, (err, data) => {
     if (err) console.log(err, err.stack);
