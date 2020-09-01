@@ -8,8 +8,8 @@ const getAspectRatio = () =>
 const getConstraints = () => {
   const supportedConstraints = navigator.mediaDevices.getSupportedConstraints();
   const idealVideoConstraints = {
-    // facingMode: 'user',
-    aspectRatio: getAspectRatio(),
+    facingMode: 'user',
+    aspectRatio: { ideal: getAspectRatio() },
   };
   const videoConstraints = Object.keys(idealVideoConstraints).reduce(
     (acc, constraint) =>
