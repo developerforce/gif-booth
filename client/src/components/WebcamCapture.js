@@ -5,11 +5,6 @@ import Webcam from 'react-webcam';
 const getAspectRatio = () =>
   window?.screen?.orientation?.type?.includes('portrait') ? 0.75 : 1 + 1 / 3;
 
-const constraints = {
-  video: true,
-  audio: false,
-};
-
 const isMCRecording = (mediaRecorderRef) =>
   mediaRecorderRef?.current?.state === 'recording';
 
@@ -50,6 +45,12 @@ const WebcamStreamCapture = ({
   );
 
   const prepareMediaRecorder = async () => {
+    const constraints = {
+      video: true,
+      audio: false,
+      facingMode: { exact: 'user' },
+      aspectRatio: getAspectRatio(),
+    };
     stream = await navigator.mediaDevices.getUserMedia(constraints);
     mediaRecorderRef.current = new MediaRecorder(webcamRef.current.stream, {
       mimeType: 'video/webm',
@@ -80,20 +81,14 @@ const WebcamStreamCapture = ({
     };
   }, []);
 
-  console.log(window.screen);
-
-  //facingMode: 'user'
   return (
-    <>
-      <Webcam
-        className={className}
-        audio={false}
-        ref={webcamRef}
-        onUserMediaError={onError}
-        videoConstraints={{ aspectRatio }}
-      />
-      {window?.screen?.orientation?.type}
-    </>
+    <Webcam
+      className={className}
+      audio={false}
+      ref={webcamRef}
+      onUserMediaError={onError}
+      videoConstraints={{ aspectRatio }}
+    />
   );
 };
 
