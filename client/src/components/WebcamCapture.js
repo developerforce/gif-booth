@@ -82,6 +82,7 @@ const WebcamStreamCapture = ({
 
   console.log(window.screen);
 
+  //facingMode: 'user'
   return (
     <>
       <Webcam
@@ -89,7 +90,7 @@ const WebcamStreamCapture = ({
         audio={false}
         ref={webcamRef}
         onUserMediaError={onError}
-        videoConstraints={{ aspectRatio, facingMode: 'user' }}
+        videoConstraints={{ aspectRatio }}
       />
       {window?.screen?.orientation?.type}
     </>
