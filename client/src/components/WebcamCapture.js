@@ -5,6 +5,11 @@ import Webcam from "react-webcam";
 const getAspectRatio = () =>
   window?.screen?.orientation?.type?.includes("portrait") ? 0.75 : 1 + 1 / 3;
 
+const constraints = {
+  video: true,
+  audio: false,
+};
+
 const WebcamStreamCapture = ({
   handleError,
   handleLoaded,
@@ -28,40 +33,27 @@ const WebcamStreamCapture = ({
   );
 
   const handleStartCapture = useCallback(() => {
-    var constraints = {
-      video: true,
-      audio: false,
-    };
-    navigator.mediaDevices
-      .getUserMedia(constraints)
-      .then(function success(stream) {
-        setCapturing(true);
-        mediaRecorderRef.current = new MediaRecorder(webcamRef.current.stream, {
-          mimeType: "video/webm",
-        });
-        mediaRecorderRef.current.addEventListener(
-          "dataavailable",
-          handleDataAvailable
-        );
-        mediaRecorderRef.current.start();
-      })
-      .catch((err) => {
-        console.log(err.toString());
-        handleError(err);
-      });
-  }, [
-    webcamRef,
-    setCapturing,
-    mediaRecorderRef,
-    handleDataAvailable,
-    handleError,
-  ]);
+    setCapturing(true);
+    mediaRecorderRef.current.start();
+  }, [setCapturing, mediaRecorderRef]);
 
   const handleStopCaptureClick = useCallback(() => {
     if (mediaRecorderRef.current instanceof MediaRecorder)
       mediaRecorderRef.current.stop();
     setCapturing(false);
   }, [mediaRecorderRef, setCapturing]);
+
+  const prepareMediaRecorder = async () => {
+    await navigator.mediaDevices.getUserMedia(constraints);
+    mediaRecorderRef.current = new MediaRecorder(webcamRef.current.stream, {
+      mimeType: "video/webm",
+    });
+    mediaRecorderRef.current.addEventListener(
+      "dataavailable",
+      handleDataAvailable
+    );
+    handleLoaded();
+  };
 
   useEffect(() => {
     if (recordedChunks.length) {
@@ -74,7 +66,7 @@ const WebcamStreamCapture = ({
   }, [recordedChunks, handleStopCapture]);
 
   useEffect(() => {
-    if (isPlaying) handleStartCapture();
+    if (isPlaying && !capturing) handleStartCapture();
     if (!isPlaying && capturing) handleStopCaptureClick();
   }, [isPlaying, capturing, handleStartCapture, handleStopCaptureClick]);
 
@@ -82,6 +74,8 @@ const WebcamStreamCapture = ({
     const applyAspectRatio = () => setAspectRatio(getAspectRatio());
     window.addEventListener("orientationchange", applyAspectRatio);
     // window.screen.orientation.lock('portrait-primary').catch(() => {});
+
+    prepareMediaRecorder();
 
     return () => {
       window.removeEventListener("orientationchange", applyAspectRatio);
@@ -94,7 +88,6 @@ const WebcamStreamCapture = ({
       className="gif-video"
       audio={false}
       ref={webcamRef}
-      onUserMedia={handleLoaded}
       onUserMediaError={handleError}
       videoConstraints={{ aspectRatio }}
     />
