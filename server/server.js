@@ -1,3 +1,5 @@
+if (process.env.NODE_ENV !== 'production') require('dotenv').config();
+
 const express = require('express');
 const basicAuth = require('express-basic-auth');
 const ffmpeg = require('fluent-ffmpeg');
@@ -8,10 +10,8 @@ const AWS = require('aws-sdk');
 const config = require('../config');
 const { createGroupPhotoStream } = require('./utils/group-photo');
 
-if (process.env.NODE_ENV !== 'production') require('dotenv').config();
-
 const makeFileLocation = (file) =>
-  `${config.BUCKET_URL}/${file.Key}`;
+  `${config.AWS_BUCKET_URL}/${file.Key}`;
 
 const s3 = new AWS.S3({
   accessKeyId: config.AWS_ACCESS_KEY_ID,
@@ -50,7 +50,7 @@ const GREETING_PREFIX = 'public/gifs/greeting-';
 const listGifs = async () => {
   try {
     const params = {
-      Bucket: config.BUCKET_NAME,
+      Bucket: config.AWS_BUCKET_NAME,
       Prefix: GREETING_PREFIX
     };
 
@@ -89,7 +89,7 @@ app.get('/listGifs', async (_, res) => {
 
 app.post('/getGroupPhoto', async (_, res) => {
   const params = {
-    Bucket: config.BUCKET_NAME,
+    Bucket: config.AWS_BUCKET_NAME,
     Prefix: 'public/group_photo.png'
   };
   const result = await s3.listObjects(params).promise();
@@ -107,7 +107,7 @@ app.post('/createGroupPhoto', async (_, res) => {
     const stream = await createGroupPhotoStream(urls);
     const params = {
       Key: 'public/group_photo.png',
-      Bucket: config.BUCKET_NAME,
+      Bucket: config.AWS_BUCKET_NAME,
       Body: stream,
       ContentType: 'image/png',
       ACL: 'public-read'
@@ -131,7 +131,7 @@ const uploadGIF = async (res, filename, folderName, onSuccess) => {
 
   const params = {
     Key: `${GREETING_PREFIX}${Date.now()}.gif`,
-    Bucket: config.BUCKET_NAME,
+    Bucket: config.AWS_BUCKET_NAME,
     Body: fileStream,
     ContentType: 'image/gif',
     ACL: 'public-read'
@@ -250,7 +250,7 @@ app.get('/download', (req, res) => {
 app.get('/s3-download', async (req, res) => {
   const { filename } = req.query;
   const params = {
-    Bucket: config.BUCKET_NAME,
+    Bucket: config.AWS_BUCKET_NAME,
     Key: filename
   };
   s3.getObject(params, (err, data) => {
@@ -264,7 +264,7 @@ app.get('/s3-download', async (req, res) => {
 app.delete('/deleteObj', auth, ({ body }, res) => {
   const { filename } = body;
   const params = {
-    Bucket: config.BUCKET_NAME,
+    Bucket: config.AWS_BUCKET_NAME,
     Key: filename
   };
   s3.deleteObject(params, (err, data) => {
