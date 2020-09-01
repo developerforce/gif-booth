@@ -2,6 +2,9 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import PropTypes from 'prop-types';
 import Webcam from 'react-webcam';
 
+const getAspectRatio = () =>
+  window?.screen?.orientation?.type?.includes('portrait') ? 0.75 : 1 + 1 / 3;
+
 const WebcamStreamCapture = ({
   handleError,
   handleLoaded,
@@ -11,6 +14,8 @@ const WebcamStreamCapture = ({
   const webcamRef = useRef(null);
   const mediaRecorderRef = useRef(null);
   const [capturing, setCapturing] = useState(false);
+  const [aspectRatio, setAspectRatio] = useState(getAspectRatio());
+
   const [recordedChunks, setRecordedChunks] = useState([]);
 
   const handleDataAvailable = useCallback(
@@ -44,7 +49,13 @@ const WebcamStreamCapture = ({
         console.log(err.toString());
         handleError(err);
       });
-  }, [webcamRef, setCapturing, mediaRecorderRef, handleDataAvailable, handleError]);
+  }, [
+    webcamRef,
+    setCapturing,
+    mediaRecorderRef,
+    handleDataAvailable,
+    handleError,
+  ]);
 
   const handleStopCaptureClick = useCallback(() => {
     if (mediaRecorderRef.current instanceof MediaRecorder)
@@ -67,6 +78,22 @@ const WebcamStreamCapture = ({
     if (!isPlaying && capturing) handleStopCaptureClick();
   }, [isPlaying, capturing, handleStartCapture, handleStopCaptureClick]);
 
+  useEffect(() => {
+    const applyAspectRatio = () => setAspectRatio(getAspectRatio());
+    window.addEventListener('orientationchange', applyAspectRatio);
+
+    window.screen.orientation.lock('portrait-primary').catch(() => {});
+
+    return () => {
+      try {
+        window.removeEventListener('orientationchange', applyAspectRatio);
+        window.screen.orientation.unlock();
+      } catch (e) {
+        console.log(e);
+      }
+    };
+  }, []);
+
   return (
     <Webcam
       className="gif-video"
@@ -74,7 +101,7 @@ const WebcamStreamCapture = ({
       ref={webcamRef}
       onUserMedia={handleLoaded}
       onUserMediaError={handleError}
-      videoConstraints={{ aspectRatio: 1 + 1 / 3 }}
+      videoConstraints={{ aspectRatio }}
     />
   );
 };
