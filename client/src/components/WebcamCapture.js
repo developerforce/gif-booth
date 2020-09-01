@@ -90,6 +90,7 @@ const WebcamStreamCapture = ({
 
   return (
     <Webcam
+      videoConstraints={{ aspectRatio: getAspectRatio() }}
       className={className}
       audio={false}
       ref={webcamRef}
