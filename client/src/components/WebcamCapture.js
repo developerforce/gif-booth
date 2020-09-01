@@ -85,7 +85,7 @@ const WebcamStreamCapture = ({
 
     return () => {
       window.removeEventListener("orientationchange", applyAspectRatio);
-      // window.screen.orientation.unlo ck();
+      // window.screen.orientation.unlock();
     };
   }, []);
 

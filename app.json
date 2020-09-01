@@ -1,0 +1,20 @@
+{
+  "name": "GIF Booth",
+  "description": "",
+  "website": "https://github.com/fostive/gif-booth",
+  "repository": "https://github.com/fostive/gif-booth",
+  "buildpacks": [
+    {
+      "url": "https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest"
+    },
+    {
+      "url": "heroku/nodejs"
+    }
+  ],
+  "addons": ["bucketeer:hobbyist"],
+  "environments": {
+    "review": {
+      "addons": ["bucketeer:hobbyist"]
+    }
+  }
+}
