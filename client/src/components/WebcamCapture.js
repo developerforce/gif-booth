@@ -43,10 +43,11 @@ const WebcamStreamCapture = ({
 
   const prepareMediaRecorder = async () => {
     const constraints = {
-      video: true,
+      video: {
+        facingMode: { exact: 'user' },
+        aspectRatio: getAspectRatio(),
+      },
       audio: false,
-      facingMode: { exact: 'user' },
-      aspectRatio: getAspectRatio(),
     };
     stream = await navigator.mediaDevices.getUserMedia(constraints);
     mediaRecorderRef.current = new MediaRecorder(webcamRef.current.stream, {
