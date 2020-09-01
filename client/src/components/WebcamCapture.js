@@ -26,11 +26,8 @@ const WebcamStreamCapture = ({
   }, [mediaRecorderRef]);
 
   const stopCapture = useCallback(() => {
-    if (!isMCRecording(mediaRecorderRef) || !stream) return;
-    mediaRecorderRef.current.stop();
-    stream.getVideoTracks().forEach(function (track) {
-      track.stop();
-    });
+    if (stream) stream.getVideoTracks().forEach((track) => track.stop());
+    if (isMCRecording(mediaRecorderRef)) mediaRecorderRef.current.stop();
   }, [mediaRecorderRef]);
 
   const onDataAvailable = useCallback(
