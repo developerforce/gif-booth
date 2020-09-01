@@ -75,7 +75,7 @@ const WebcamStreamCapture = ({
           'dataavailable',
           onDataAvailable
         );
-      if (isMCRecording(mediaRecorderRef)) stopCapture();
+      stopCapture();
     };
   }, []);
 
