@@ -1,6 +1,6 @@
 # GIF Booth
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 Add animated GIFs and Family Photo to your virtual events!
@@ -94,6 +94,7 @@ Thanks goes to these wonderful ✨ people ([emoji key](https://allcontributors.o
 <table>
   <tr>
     <td align="center"><a href="https://crc.io"><img src="https://avatars3.githubusercontent.com/u/275734?v=4" width="100px;" alt=""/><br /><sub><b>Chris Castle</b></sub></a><br /><a href="https://github.com/fostive/gif-booth/commits?author=crcastle" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://clif.world"><img src="https://avatars2.githubusercontent.com/u/13678764?v=4" width="100px;" alt=""/><br /><sub><b>Clifton Campbell</b></sub></a><br /><a href="https://github.com/fostive/gif-booth/commits?author=clif-os" title="Code">💻</a> <a href="#ideas-clif-os" title="Ideas, Planning, & Feedback">🤔</a> <a href="#design-clif-os" title="Design">🎨</a> <a href="https://github.com/fostive/gif-booth/commits?author=clif-os" title="Documentation">📖</a></td>
   </tr>
 </table>
 
