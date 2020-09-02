@@ -25,6 +25,20 @@
         "design",
         "doc"
       ]
+    },
+    {
+      "login": "julianduque",
+      "name": "Julián Duque",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/733877?v=4",
+      "profile": "https://julianduque.co",
+      "contributions": [
+        "code",
+        "ideas",
+        "doc",
+        "userTesting",
+        "review",
+        "bug"
+      ]
     }
   ],
   "contributorsPerLine": 7,
