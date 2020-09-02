@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import download from 'downloadjs';
 import { Link } from 'react-router-dom';
 import './Create.css';
@@ -47,15 +47,15 @@ function Create({ history }) {
   );
 
   const createGIF = useCallback(
-    (callback) => {
+    (vidId, callback) => {
       let formData = new FormData();
       const fontsize = text.length && 340 / text.length;
       formData.append('text', text);
       formData.append('fontsize', fontsize);
-      formData.append('videoId', videoId);
+      formData.append('videoId', vidId);
       fetch('/video2gif', {
         method: 'POST',
-        body: formData,
+        body: formData
       })
         .then((res) => res.json())
         .then((response) => {
@@ -67,13 +67,8 @@ function Create({ history }) {
         })
         .catch(onError);
     },
-    [setImageUrl, onError, text, videoId]
+    [setImageUrl, onError, text]
   );
-
-  useEffect(() => {
-    if (!videoId) return;
-    createGIF();
-  }, [videoId, createGIF]);
 
   const upload = () => {
     setUploading(true);
@@ -81,8 +76,8 @@ function Create({ history }) {
       method: 'POST',
       body: JSON.stringify({ filename: imageUrl }),
       headers: {
-        'Content-Type': 'application/json',
-      },
+        'Content-Type': 'application/json'
+      }
     })
       .then(() => history.push('/home'))
       .catch(onError);
@@ -94,7 +89,7 @@ function Create({ history }) {
     formData.append('video', blob);
     fetch('/uploadBlob', {
       method: 'POST',
-      body: formData,
+      body: formData
     })
       .then((res) => res.ok && res.json())
       .then((response) => {
@@ -104,6 +99,7 @@ function Create({ history }) {
         const { filename } = response;
         const videoId = filename.replace('.webm', '');
         setVideoId(videoId);
+        createGIF(videoId);
       })
       .catch(onError);
   };
@@ -130,7 +126,7 @@ function Create({ history }) {
 
   const warningMap = {
     [WARNING_GENERIC]: <GenericWarning retry={retry} />,
-    [WARNING_BROWSER]: <BrowserWarning />,
+    [WARNING_BROWSER]: <BrowserWarning />
   };
 
   return (
@@ -200,7 +196,7 @@ function Create({ history }) {
                 </Button>
                 <Button
                   disabled={text === ''}
-                  onClick={() => createGIF(() => setPhase(PHASE_END))}
+                  onClick={() => createGIF(videoId, () => setPhase(PHASE_END))}
                 >
                   Save Caption
                 </Button>
