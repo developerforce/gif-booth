@@ -1,6 +1,6 @@
 # GIF Booth
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-4-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 Add animated GIFs and Family Photo to your virtual events!
@@ -96,6 +96,7 @@ Thanks goes to these wonderful ✨ people ([emoji key](https://allcontributors.o
     <td align="center"><a href="https://crc.io"><img src="https://avatars3.githubusercontent.com/u/275734?v=4" width="100px;" alt=""/><br /><sub><b>Chris Castle</b></sub></a><br /><a href="https://github.com/fostive/gif-booth/commits?author=crcastle" title="Documentation">📖</a></td>
     <td align="center"><a href="https://clif.world"><img src="https://avatars2.githubusercontent.com/u/13678764?v=4" width="100px;" alt=""/><br /><sub><b>Clifton Campbell</b></sub></a><br /><a href="https://github.com/fostive/gif-booth/commits?author=clif-os" title="Code">💻</a> <a href="#ideas-clif-os" title="Ideas, Planning, & Feedback">🤔</a> <a href="#design-clif-os" title="Design">🎨</a> <a href="https://github.com/fostive/gif-booth/commits?author=clif-os" title="Documentation">📖</a></td>
     <td align="center"><a href="https://julianduque.co"><img src="https://avatars3.githubusercontent.com/u/733877?v=4" width="100px;" alt=""/><br /><sub><b>Julián Duque</b></sub></a><br /><a href="https://github.com/fostive/gif-booth/commits?author=julianduque" title="Code">💻</a> <a href="#ideas-julianduque" title="Ideas, Planning, & Feedback">🤔</a> <a href="https://github.com/fostive/gif-booth/commits?author=julianduque" title="Documentation">📖</a> <a href="#userTesting-julianduque" title="User Testing">📓</a> <a href="https://github.com/fostive/gif-booth/pulls?q=is%3Apr+reviewed-by%3Ajulianduque" title="Reviewed Pull Requests">👀</a> <a href="https://github.com/fostive/gif-booth/issues?q=author%3Ajulianduque" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="https://github.com/justjenu"><img src="https://avatars0.githubusercontent.com/u/12837239?v=4" width="100px;" alt=""/><br /><sub><b>Jennifer Hooper</b></sub></a><br /><a href="#userTesting-justjenu" title="User Testing">📓</a></td>
   </tr>
 </table>
 
