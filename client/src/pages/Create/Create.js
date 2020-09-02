@@ -10,14 +10,14 @@ import Button from '../../components/Button';
 import GenericWarning from './GenericWarning';
 import BrowserWarning from './BrowserWarning';
 
-const WARNING_BROWSER = 'warning_browser';
-const WARNING_GENERIC = 'warning_generic';
+const WARNING_BROWSER = 'warning_browser'
+const WARNING_GENERIC = 'warning_generic'
 
-const PHASE_START = 'phase_start';
-const PHASE_COUNTDOWN = 'phase_countdown';
-const PHASE_RECORDING = 'phase_recording';
-const PHASE_TEXT = 'phase_text';
-const PHASE_END = 'phase_end';
+const PHASE_START = 'phase_start'
+const PHASE_COUNTDOWN = 'phase_countdown'
+const PHASE_RECORDING = 'phase_recording'
+const PHASE_TEXT = 'phase_text'
+const PHASE_END = 'phase_end'
 
 function Create({ history }) {
   const [phase, setPhase] = useState(PHASE_START);
@@ -28,7 +28,7 @@ function Create({ history }) {
   const [isUploading, setUploading] = useState(false);
   const [warning, setWarning] = useState(
     window.MediaRecorder ? false : WARNING_BROWSER,
-  );
+  )
 
   const retry = () => {
     setGifId(null);
@@ -39,11 +39,11 @@ function Create({ history }) {
 
   const onError = useCallback(
     (error) => {
-      console.error('Error:', error);
-      setWarning(WARNING_GENERIC);
+      console.error('Error:', error)
+      setWarning(WARNING_GENERIC)
     },
     [setWarning],
-  );
+  )
 
   const createGIF = useCallback(
     (vidId, callback) => {
@@ -60,7 +60,7 @@ function Create({ history }) {
         .then((res) => res.json())
         .then((response) => {
           if (!Object.keys(response).length) {
-            throw Error;
+            throw Error
           }
           setGifId(response.videoId);
           if (callback) callback();
@@ -72,7 +72,7 @@ function Create({ history }) {
   );
 
   const upload = () => {
-    setUploading(true);
+    setUploading(true)
     fetch('/uploadGIF', {
       method: 'POST',
       body: JSON.stringify({ filename: gifId }),
@@ -81,13 +81,13 @@ function Create({ history }) {
       }
     })
       .then(() => history.push('/home'))
-      .catch(onError);
-  };
+      .catch(onError)
+  }
 
   const onStopCapture = (blob) => {
-    if (!blob) return;
-    const formData = new FormData();
-    formData.append('video', blob);
+    if (!blob) return
+    const formData = new FormData()
+    formData.append('video', blob)
     fetch('/uploadBlob', {
       method: 'POST',
       body: formData
@@ -95,14 +95,14 @@ function Create({ history }) {
       .then((res) => res.ok && res.json())
       .then((response) => {
         if (!response) {
-          throw Error;
+          throw Error
         }
         const { filename } = response;
         const id = filename.replace('.webm', '');
         createGIF(id);
       })
-      .catch(onError);
-  };
+      .catch(onError)
+  }
 
   const downloadGif = async () => {
     const res = await fetch(`/download?filename=${gifId}`);
@@ -118,11 +118,10 @@ function Create({ history }) {
         <Icon name="close" />
       </Link>
     </>
-  );
+  )
 
-  const isPrerecordingPhase = [PHASE_START, PHASE_COUNTDOWN].includes(phase);
-  const isPostRecordingPhase =
-    !isPrerecordingPhase && phase !== PHASE_RECORDING;
+  const isPrerecordingPhase = [PHASE_START, PHASE_COUNTDOWN].includes(phase)
+  const isPostRecordingPhase = !isPrerecordingPhase && phase !== PHASE_RECORDING
 
   const warningMap = {
     [WARNING_GENERIC]: <GenericWarning retry={retry} />,
@@ -239,7 +238,7 @@ function Create({ history }) {
         </div>
       )}
     </Page>
-  );
+  )
 }
 
-export default Create;
+export default Create

@@ -1,1 +1,1 @@
-export { default } from './GroupPhoto';
+export { default } from './GroupPhoto'

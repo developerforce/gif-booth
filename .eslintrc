@@ -6,7 +6,6 @@
     "browser": true
   },
   "rules": {
-    "semi": 2,
     "jsx-a11y/anchor-is-valid": 1,
     "global-require": 1,
     "react/prop-types": 0,

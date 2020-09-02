@@ -1,9 +1,9 @@
-import React from 'react';
-import { Route, Redirect, Switch } from 'react-router-dom';
-import Create from './pages/Create';
-import Home from './pages/Home';
-import GroupPhoto from './pages/GroupPhoto';
-import Lost from './pages/Lost';
+import React from 'react'
+import { Route, Redirect, Switch } from 'react-router-dom'
+import Create from './pages/Create'
+import Home from './pages/Home'
+import GroupPhoto from './pages/GroupPhoto'
+import Lost from './pages/Lost'
 
 const App = () => (
   <Switch>
@@ -15,6 +15,6 @@ const App = () => (
     </Route>
     <Route component={Lost} />
   </Switch>
-);
+)
 
-export default App;
+export default App

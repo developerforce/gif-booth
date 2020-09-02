@@ -39,11 +39,11 @@
 }
 
 .gif-button.primary:hover > .button-icon-wrapper {
-  background: #2B6CB0;
+  background: #2b6cb0;
 }
 
 .gif-button.primary i {
-  color: #E7F5FE;
+  color: #e7f5fe;
   transform: translateX(0.5px);
 }
 
@@ -58,7 +58,7 @@
 }
 
 .gif-button.primary.grey {
-  background: #A0AEC0;
+  background: #a0aec0;
   border-color: #718096;
 }
 
@@ -71,24 +71,24 @@
 }
 
 .gif-button.primary.grey:hover > .button-icon-wrapper {
-  background: #4A5568;
+  background: #4a5568;
 }
 
 .gif-button.primary.red {
-  background: #F56565;
-  border-color: #E53E3E;
+  background: #f56565;
+  border-color: #e53e3e;
 }
 
 .gif-button.primary.red:hover {
-  background: #E53E3E;
+  background: #e53e3e;
 }
 
 .gif-button.primary.red > .button-icon-wrapper {
-  background: #E53E3E;
+  background: #e53e3e;
 }
 
 .gif-button.primary.red:hover > .button-icon-wrapper {
-  background: #C53030;
+  background: #c53030;
 }
 
 .gif-button.secondary {
@@ -98,32 +98,31 @@
   padding: 12px 24px;
 }
 
-
 .gif-button.secondary > .button-icon-wrapper {
   margin-right: 12px;
 }
 
 .gif-button.secondary:hover {
-  color: #2C5282;
-  border-color: #2C5282;
+  color: #2c5282;
+  border-color: #2c5282;
 }
 
 .gif-button.secondary.grey {
   color: #718096;
-  border-color: #A0AEC0;
+  border-color: #a0aec0;
 }
 
 .gif-button.secondary.grey:hover {
-  color: #4A5568;
-  border-color: #4A5568;
+  color: #4a5568;
+  border-color: #4a5568;
 }
 
 .gif-button.secondary.red {
-  color: #E53E3E;
-  border-color: #F56565;
+  color: #e53e3e;
+  border-color: #f56565;
 }
 
 .gif-button.secondary.red:hover {
-  color: #C53030;
-  border-color: #C53030;
+  color: #c53030;
+  border-color: #c53030;
 }

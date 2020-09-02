@@ -1,6 +1,6 @@
-const sharp = require('sharp');
-const axios = require('axios');
-const fs = require('fs');
+const sharp = require('sharp')
+const axios = require('axios')
+const fs = require('fs')
 
 const chunkArray = (array, size) => {
   if (!array) return [];
@@ -29,19 +29,19 @@ const fetchImg = async (url) => {
     });
     return res;
   } catch (e) {
-    return null;
+    return null
   }
-};
+}
 
 const fetchImgs = async (imgs) => {
-  const fetched = await Promise.all(imgs.map(fetchImg));
-  return fetched.filter((img) => img !== null);
-};
+  const fetched = await Promise.all(imgs.map(fetchImg))
+  return fetched.filter((img) => img !== null)
+}
 
 const createImageLayout = (imgs) => {
   const aspectRatio = 1 + 1 / 3;
 
-  const count = imgs.length;
+  const count = imgs.length
 
   const idealGridWidth = 2000;
   const rowCellCount = Math.ceil(Math.sqrt(count));
@@ -109,19 +109,19 @@ const compositeImg = async (img, offset) => {
 };
 
 const createGroupPhoto = async (urls) => {
-  const padding = 16;
-  const brandingHeight = 80;
-  const conferenceOutputPath = './temp/conference_logo.png';
+  const padding = 16
+  const brandingHeight = 80
+  const conferenceOutputPath = './temp/conference_logo.png'
 
-  const imgs = await fetchImgs(urls);
+  const imgs = await fetchImgs(urls)
 
   const layout = createImageLayout(imgs);
 
   await sharp('./uploads/CascadiaJSLong.png')
     .resize(null, brandingHeight)
-    .toFile(conferenceOutputPath);
-  const imgLogo = await sharp(conferenceOutputPath);
-  const logoMetadata = await imgLogo.metadata();
+    .toFile(conferenceOutputPath)
+  const imgLogo = await sharp(conferenceOutputPath)
+  const logoMetadata = await imgLogo.metadata()
 
   const totalWidth = layout.width + padding * 2;
   const totalHeight = layout.height + logoMetadata.height + padding * 3;
@@ -160,8 +160,8 @@ const createGroupPhoto = async (urls) => {
     }
   ]);
 
-  return groupPhoto;
-};
+  return groupPhoto
+}
 
 const outputPath = './temp/group-photo.jpeg';
 
@@ -176,9 +176,9 @@ const createGroupPhotoStream = async (urls) => {
     console.log(`Group Photo Output to ${outputPath}`);
     return fs.createReadStream(outputPath);
   } catch (e) {
-    console.log(e);
-    return null;
+    console.log(e)
+    return null
   }
-};
+}
 
-module.exports = { createGroupPhotoStream };
+module.exports = { createGroupPhotoStream }

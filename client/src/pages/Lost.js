@@ -1,9 +1,9 @@
-import React from 'react';
-import { useHistory } from 'react-router-dom';
-import Warning from '../components/Warning';
+import React from 'react'
+import { useHistory } from 'react-router-dom'
+import Warning from '../components/Warning'
 
 export default () => {
-  const history = useHistory();
+  const history = useHistory()
 
   return (
     <div className="full-center">
@@ -16,5 +16,5 @@ export default () => {
         warningIcon="folder-open"
       />
     </div>
-  );
-};
+  )
+}

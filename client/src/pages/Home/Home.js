@@ -1,12 +1,12 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import './Home.css';
-import ReactPaginate from 'react-paginate';
-import useListGIFs from '../../hooks/useListGIFs';
-import { downloadFromS3 } from '../../utils/download';
-import Button from '../../components/Button';
-import Icon from '../../components/Icon';
-import Page from '../../components/Page';
+import React from 'react'
+import { Link } from 'react-router-dom'
+import './Home.css'
+import ReactPaginate from 'react-paginate'
+import useListGIFs from '../../hooks/useListGIFs'
+import { downloadFromS3 } from '../../utils/download'
+import Button from '../../components/Button'
+import Icon from '../../components/Icon'
+import Page from '../../components/Page'
 
 const Home = () => {
   const {
@@ -19,7 +19,7 @@ const Home = () => {
     end,
     isLoading,
     isInitializing,
-  } = useListGIFs();
+  } = useListGIFs()
 
   const header = (
     <>
@@ -42,7 +42,7 @@ const Home = () => {
         />
       )}
     </>
-  );
+  )
 
   const empty = (
     <div className="gif-warning column">
@@ -50,7 +50,7 @@ const Home = () => {
       <h1>No Greetings Recorded Yet</h1>
       <p>You could be the first!</p>
     </div>
-  );
+  )
 
   return (
     <Page header={header} headerClassName="gif-home-header">
@@ -81,7 +81,7 @@ const Home = () => {
         ))}
       </div>
     </Page>
-  );
-};
+  )
+}
 
-export default Home;
+export default Home
