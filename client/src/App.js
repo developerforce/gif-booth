@@ -9,7 +9,6 @@ const App = () => (
   <Switch>
     <Route exact path="/home" component={Home} />
     <Route exact path="/new-gif" component={Create} />
-
     <Route exact path="/group-photo" component={GroupPhoto} />
     <Route exact path="/">
       <Redirect to="/home" />
