@@ -10,8 +10,7 @@ const AWS = require('aws-sdk');
 const config = require('../config');
 const { createGroupPhotoStream } = require('./utils/group-photo');
 
-const makeFileLocation = (file) =>
-  `${config.AWS_BUCKET_URL}/${file.Key}`;
+const makeFileLocation = (file) => `${config.AWS_BUCKET_URL}/${file.Key}`;
 
 const s3 = new AWS.S3({
   accessKeyId: config.AWS_ACCESS_KEY_ID,
@@ -171,9 +170,6 @@ app.post('/uploadGIF', ({ body }, res) => {
     fs.unlink(`uploads/${filename}.webm`, () =>
       console.log('.webm file was deleted')
     );
-    fs.unlink(`uploads/${filename}.png`, () =>
-      console.log('.png file was deleted')
-    );
   });
 });
 
@@ -212,16 +208,7 @@ app.post('/video2gif', upload.none(), ({ body }, res) => {
 });
 
 app.post('/uploadBlob', upload.single('video'), ({ file }, res) => {
-  const filename = file.path.replace('webm', 'png');
-  ffmpeg(file.path)
-    .screenshots({
-      timestamps: [0],
-      filename,
-      size: '320x240'
-    })
-    .on('end', () => {
-      res.send(file);
-    });
+  res.send(file);
 });
 
 app.get('/img', (req, res) => {
