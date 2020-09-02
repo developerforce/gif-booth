@@ -106,7 +106,10 @@ const createGroupPhoto = async (urls) => {
       const inputs = await Promise.all(
         row.imgs.map(async (img) => {
           const loaded = await sharp(img.img.data);
-          const input = await loaded
+          const { pages } = await loaded.metadata();
+          const page = Math.round(pages / 2) || 0;
+          const frame = await sharp(img.img.data, { page });
+          const input = await frame
             .resize(img.width, img.height)
             .raw()
             .toBuffer();
@@ -117,7 +120,7 @@ const createGroupPhoto = async (urls) => {
             top: img.top,
             left: img.left,
           };
-        })
+        }),
       );
 
       const rowInput = await sharp({
@@ -138,7 +141,7 @@ const createGroupPhoto = async (urls) => {
         top: row.top + padding,
         left: row.left + padding,
       };
-    })
+    }),
   );
 
   const groupPhoto = await sharp({
