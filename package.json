@@ -9,7 +9,8 @@
     "server": "nodemon server/server.js",
     "client": "node start-client.js",
     "heroku-postbuild": "cd client && npm install --only=dev && npm install && npm run build",
-    "lint": "semistandard --fix server/*",
+    "lint": "./node_modules/.bin/eslint --fix \"{client/src,server}/**/*.{js,jsx}\"",
+    "format": "npx prettier --write \"{client/src,server}*/**/*.{js,jsx,css}\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -25,8 +26,30 @@
     "sharp": "^0.26.0"
   },
   "devDependencies": {
+    "babel-eslint": "^10.0.1",
     "dotenv": "^8.2.0",
-    "nodemon": "^2.0.4",
-    "semistandard": "^14.2.3"
+    "eslint": "^7.8.1",
+    "eslint-config-airbnb": "^18.2.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-jsx-a11y": "^6.3.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "eslint-plugin-react": "^7.20.6",
+    "eslint-plugin-react-hooks": "^4.1.0",
+    "husky": "^4.2.5",
+    "lint-staged": "^10.2.13",
+    "nodemon": "^2.0.4"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,jsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
   }
 }
