@@ -26,8 +26,9 @@ const Button = ({
         !secondary && 'primary',
         secondary && 'secondary',
         grey && 'grey',
-        red && 'red'
+        red && 'red',
       )}
+      type="button"
       {...props}
     >
       {icon && (

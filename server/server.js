@@ -106,6 +106,7 @@ app.post('/createGroupPhoto', async (_, res) => {
     const result = await listGifs();
     const urls = result.map((file) => makeFileLocation(file));
     const stream = await createGroupPhotoStream(urls);
+    if (!stream) return;
     const params = {
       Key: groupPhotoPath,
       Bucket: config.AWS_BUCKET_NAME,

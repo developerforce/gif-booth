@@ -27,15 +27,6 @@ export default function useListGIFs() {
     loadingTimeout = setTimeout(() => setIsLoading(false), 500);
   };
 
-  useEffect(() => {
-    mounted = true;
-    listGifs();
-    return () => {
-      mounted = false;
-      cancelLoadingTimeout();
-    };
-  }, []);
-
   const listGifs = async () => {
     try {
       const res = await fetch('/listGifs');
@@ -48,6 +39,15 @@ export default function useListGIFs() {
       console.error('Error:', e);
     }
   };
+
+  useEffect(() => {
+    mounted = true;
+    listGifs();
+    return () => {
+      mounted = false;
+      cancelLoadingTimeout();
+    };
+  }, []);
 
   return {
     page,

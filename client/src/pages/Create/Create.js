@@ -27,7 +27,7 @@ function Create({ history }) {
   const [isProcessingGif, setIsProcessingGif] = useState('');
   const [isUploading, setUploading] = useState(false);
   const [warning, setWarning] = useState(
-    !!window.MediaRecorder ? false : WARNING_BROWSER
+    window.MediaRecorder ? false : WARNING_BROWSER,
   );
 
   const retry = () => {
@@ -42,7 +42,7 @@ function Create({ history }) {
       console.error('Error:', error);
       setWarning(WARNING_GENERIC);
     },
-    [setWarning]
+    [setWarning],
   );
 
   const createGIF = useCallback(
@@ -86,7 +86,7 @@ function Create({ history }) {
 
   const onStopCapture = (blob) => {
     if (!blob) return;
-    let formData = new FormData();
+    const formData = new FormData();
     formData.append('video', blob);
     fetch('/uploadBlob', {
       method: 'POST',
@@ -98,8 +98,8 @@ function Create({ history }) {
           throw Error;
         }
         const { filename } = response;
-        const videoId = filename.replace('.webm', '');
-        createGIF(videoId);
+        const id = filename.replace('.webm', '');
+        createGIF(id);
       })
       .catch(onError);
   };
@@ -163,11 +163,7 @@ function Create({ history }) {
             />
           )}
           {phase === PHASE_RECORDING && (
-            <Countdown
-              isPlaying={true}
-              onFinish={() => setPhase(PHASE_TEXT)}
-              danger
-            />
+            <Countdown isPlaying onFinish={() => setPhase(PHASE_TEXT)} danger />
           )}
           {!isPostRecordingPhase && (
             <Button

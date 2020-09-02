@@ -11,7 +11,7 @@ const BrowserWarning = () => {
 
   const uploadUserGIF = async () => {
     setIsUploading(true);
-    let formData = new FormData();
+    const formData = new FormData();
     formData.append('gif', userUploadGIF);
     const res = await fetch('/uploadUserGIF', {
       method: 'POST',

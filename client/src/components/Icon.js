@@ -13,6 +13,7 @@ Icon.propTypes = {
 };
 
 Icon.defaultProps = {
+  title: '',
   size: null,
 };
 

@@ -177,6 +177,7 @@ const createGroupPhotoStream = async (urls) => {
     return fs.createReadStream(outputPath);
   } catch (e) {
     console.log(e);
+    return null;
   }
 };
 

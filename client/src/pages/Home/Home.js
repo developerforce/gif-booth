@@ -1,9 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import './Home.css';
+import ReactPaginate from 'react-paginate';
 import useListGIFs from '../../hooks/useListGIFs';
 import { downloadFromS3 } from '../../utils/download';
-import ReactPaginate from 'react-paginate';
 import Button from '../../components/Button';
 import Icon from '../../components/Icon';
 import Page from '../../components/Page';
@@ -63,6 +63,8 @@ const Home = () => {
           </Link>
         </div>
         {gifs.map(({ Key, Location }) => (
+          // disabling this line as this will be changed into a modal with proper usage of buttons for click handling anyways
+          // eslint-disable-next-line
           <div
             onClick={() => downloadFromS3(Key)}
             key={Key}
