@@ -22,7 +22,7 @@ const PHASE_END = 'phase_end';
 function Create({ history }) {
   const [phase, setPhase] = useState(PHASE_START);
   const [videoId, setVideoId] = useState();
-  const [isWebcamLoaded, setIsWebcamLoaded] = useState(false);
+  const [isWebcamReady, setIsWebcamReady] = useState(false);
   const [imageUrl, setImageUrl] = useState();
   const [text, setText] = useState('');
   const [isUploading, setUploading] = useState(false);
@@ -38,7 +38,7 @@ function Create({ history }) {
     setWarning(false);
   };
 
-  const handleError = useCallback(
+  const onError = useCallback(
     (error) => {
       console.error('Error:', error);
       setWarning(WARNING_GENERIC);
@@ -65,9 +65,9 @@ function Create({ history }) {
           setImageUrl(response.videoId);
           if (callback) callback();
         })
-        .catch(handleError);
+        .catch(onError);
     },
-    [setImageUrl, handleError, text, videoId]
+    [setImageUrl, onError, text, videoId]
   );
 
   useEffect(() => {
@@ -85,10 +85,10 @@ function Create({ history }) {
       },
     })
       .then(() => history.push('/home'))
-      .catch(handleError);
+      .catch(onError);
   };
 
-  const handleStopCapture = (blob) => {
+  const onStopCapture = (blob) => {
     if (!blob) return;
     let formData = new FormData();
     formData.append('video', blob);
@@ -105,10 +105,10 @@ function Create({ history }) {
         const videoId = filename.replace('.webm', '');
         setVideoId(videoId);
       })
-      .catch(handleError);
+      .catch(onError);
   };
 
-  const handleDownload = async () => {
+  const downloadGif = async () => {
     const res = await fetch(`/download?filename=${imageUrl}`);
     const fileBlob = await res.blob();
     download(fileBlob, `${imageUrl}.gif`);
@@ -146,15 +146,16 @@ function Create({ history }) {
           <div className="gif-image-container">
             {imageUrl ? (
               <img
+                className="gif-video"
                 src={`/img?filename=${imageUrl}&reload=${phase === PHASE_END}`}
                 alt="Your GIF"
-                className="gif-video"
               />
             ) : (
               <Webcam
-                handleError={() => setWarning(WARNING_GENERIC)}
-                handleLoaded={() => setIsWebcamLoaded(true)}
-                handleStopCapture={handleStopCapture}
+                className="gif-video"
+                onError={() => setWarning(WARNING_GENERIC)}
+                onCaptureReady={() => setIsWebcamReady(true)}
+                onStopCapture={onStopCapture}
                 isPlaying={phase === PHASE_RECORDING}
               />
             )}
@@ -179,7 +180,7 @@ function Create({ history }) {
               grey={phase === PHASE_COUNTDOWN}
               red={phase === PHASE_RECORDING}
               icon={phase === PHASE_START ? 'play' : 'camera'}
-              disabled={!isWebcamLoaded}
+              disabled={!isWebcamReady}
             >
               {phase === PHASE_START && 'Start Recording'}
               {phase === PHASE_COUNTDOWN && 'Get Ready...'}
@@ -211,7 +212,7 @@ function Create({ history }) {
               <div className="gif-button-group">
                 <Button
                   icon="download"
-                  onClick={handleDownload}
+                  onClick={downloadGif}
                   disabled={isUploading}
                   secondary
                   grey
