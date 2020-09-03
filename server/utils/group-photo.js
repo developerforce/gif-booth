@@ -179,9 +179,9 @@ const createGroupPhotoStream = async (urls) => {
     const output = await groupPhoto.jpeg({
       quality: 75,
     });
-    await output.toFile('./temp/group-photo.png');
+    await output.toFile('./temp/group-photo.jpg');
     console.log('Group Photo Output to /temp');
-    return fs.createReadStream('./temp/group-photo.png');
+    return fs.createReadStream('./temp/group-photo.jpg');
   } catch (e) {
     console.log(e);
   }
