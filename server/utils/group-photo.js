@@ -107,23 +107,23 @@ const createGroupPhoto = async (urls) => {
         row.imgs.map(async (img) => {
           const toSizedBuffer = (frame) =>
             frame.resize(img.width, img.height).raw().toBuffer();
-          let inputFrame;
+          let input;
           let firstFrame = await sharp(img.img.data);
           try {
             const { pages } = await firstFrame.metadata();
             const page = Math.round(pages / 2) || 0;
             middleFrame = await sharp(img.img.data, { page });
-            inputFrame = await toSizedBuffer(middleFrame);
+            input = await toSizedBuffer(middleFrame);
           } catch (e) {
             console.log(
               'Failed to resize and convert middle frame to buffer, defaulting to first frame.',
               { url: img.img.config.url },
             );
-            inputFrame = await toSizedBuffer(firstFrame);
+            input = await toSizedBuffer(firstFrame);
           }
 
           return {
-            input: inputFrame,
+            input,
             raw: { width: img.width, height: img.height, channels: 4 },
             top: img.top,
             left: img.left,
