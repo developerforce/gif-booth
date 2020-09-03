@@ -105,17 +105,25 @@ const createGroupPhoto = async (urls) => {
     imgMap.map(async (row) => {
       const inputs = await Promise.all(
         row.imgs.map(async (img) => {
-          const loaded = await sharp(img.img.data);
-          const { pages } = await loaded.metadata();
-          const page = Math.round(pages / 2) || 0;
-          const frame = await sharp(img.img.data, { page });
-          const input = await frame
-            .resize(img.width, img.height)
-            .raw()
-            .toBuffer();
+          const toSizedBuffer = (frame) =>
+            frame.resize(img.width, img.height).raw().toBuffer();
+          let inputFrame;
+          let firstFrame = await sharp(img.img.data);
+          try {
+            const { pages } = await firstFrame.metadata();
+            const page = Math.round(pages / 2) || 0;
+            middleFrame = await sharp(img.img.data, { page });
+            inputFrame = await toSizedBuffer(middleFrame);
+          } catch (e) {
+            console.log(
+              'Failed to resize and convert middle frame to buffer, defaulting to first frame.',
+              { url: img.img.config.url },
+            );
+            inputFrame = await toSizedBuffer(firstFrame);
+          }
 
           return {
-            input,
+            input: inputFrame,
             raw: { width: img.width, height: img.height, channels: 4 },
             top: img.top,
             left: img.left,
