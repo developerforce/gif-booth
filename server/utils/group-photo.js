@@ -111,7 +111,7 @@ const createGroupPhoto = async (urls) => {
           const firstFrame = await sharp(img.img.data);
           const { pages } = await firstFrame.metadata();
           const page = Math.round(pages / 2) || 0;
-          middleFrame = await sharp(img.img.data, { page });
+          const middleFrame = await sharp(img.img.data, { page });
           try {
             input = await toSizedBuffer(middleFrame);
           } catch (e) {
