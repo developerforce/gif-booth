@@ -10,19 +10,18 @@ const AWS = require('aws-sdk');
 const config = require('../config');
 const { createGroupPhotoStream } = require('./utils/group-photo');
 
-const makeFileLocation = (file) =>
-  `${config.AWS_BUCKET_URL}/${file.Key}`;
+const makeFileLocation = (file) => `${config.AWS_BUCKET_URL}/${file.Key}`;
 
 const s3 = new AWS.S3({
   accessKeyId: config.AWS_ACCESS_KEY_ID,
   secretAccessKey: config.AWS_SECRET_ACCESS_KEY,
-  region: config.AWS_REGION
+  region: config.AWS_REGION,
 });
 
 const auth = basicAuth({
   users: {
-    [config.AUTH_USERNAME]: config.AUTH_PASSWORD
-  }
+    [config.AUTH_USERNAME]: config.AUTH_PASSWORD,
+  },
 });
 
 const app = express();
@@ -40,7 +39,7 @@ const storage = multer.diskStorage({
       filename = `${Date.now()}.webm`;
     }
     cb(null, filename);
-  }
+  },
 });
 
 const upload = multer({ storage });
@@ -51,7 +50,7 @@ const listGifs = async () => {
   try {
     const params = {
       Bucket: config.AWS_BUCKET_NAME,
-      Prefix: GREETING_PREFIX
+      Prefix: GREETING_PREFIX,
     };
 
     const getAllContents = async (PrevContents = [], NextContinuationToken) => {
@@ -60,7 +59,7 @@ const listGifs = async () => {
           ...params,
           ...(NextContinuationToken
             ? { ContinuationToken: NextContinuationToken }
-            : {})
+            : {}),
         })
         .promise();
       const Contents = [...PrevContents, ...result.Contents];
@@ -73,7 +72,7 @@ const listGifs = async () => {
 
     const OrderedContents = Contents.map((file) => ({
       ...file,
-      Location: makeFileLocation(file)
+      Location: makeFileLocation(file),
     })).reverse();
 
     return OrderedContents;
@@ -87,15 +86,17 @@ app.get('/listGifs', async (_, res) => {
   res.send(result);
 });
 
+const groupPhotoPath = 'public/group_photo.png';
+
 app.post('/getGroupPhoto', async (_, res) => {
   const params = {
     Bucket: config.AWS_BUCKET_NAME,
-    Prefix: 'public/group_photo.png'
+    Prefix: groupPhotoPath,
   };
   const result = await s3.listObjects(params).promise();
   result.Contents = result.Contents.map((file) => ({
     ...file,
-    Location: makeFileLocation(file)
+    Location: makeFileLocation(file),
   }));
   res.send(result);
 });
@@ -106,11 +107,11 @@ app.post('/createGroupPhoto', async (_, res) => {
     const urls = result.map((file) => makeFileLocation(file));
     const stream = await createGroupPhotoStream(urls);
     const params = {
-      Key: 'public/group_photo.png',
+      Key: groupPhotoPath,
       Bucket: config.AWS_BUCKET_NAME,
       Body: stream,
       ContentType: 'image/png',
-      ACL: 'public-read'
+      ACL: 'public-read',
     };
     s3.upload(params, (err, data) => {
       if (err) {
@@ -134,7 +135,7 @@ const uploadGIF = async (res, filename, folderName, onSuccess) => {
     Bucket: config.AWS_BUCKET_NAME,
     Body: fileStream,
     ContentType: 'image/gif',
-    ACL: 'public-read'
+    ACL: 'public-read',
   };
 
   await s3
@@ -157,7 +158,7 @@ app.post('/uploadUserGIF', upload.single('gif'), async (req, res) => {
   if (!gif) {
     res.status(400).send({
       status: false,
-      data: 'No file is selected.'
+      data: 'No file is selected.',
     });
   } else {
     const filename = gif.filename.replace('.gif', '');
@@ -169,10 +170,10 @@ app.post('/uploadGIF', ({ body }, res) => {
   const { filename } = body;
   uploadGIF(res, filename, 'temp', () => {
     fs.unlink(`uploads/${filename}.webm`, () =>
-      console.log('.webm file was deleted')
+      console.log('.webm file was deleted'),
     );
     fs.unlink(`uploads/${filename}.png`, () =>
-      console.log('.png file was deleted')
+      console.log('.png file was deleted'),
     );
   });
 });
@@ -196,10 +197,10 @@ app.post('/video2gif', upload.none(), ({ body }, res) => {
           y: '(h-text_h)*.95',
           shadowcolor: 'black',
           shadowx: 2,
-          shadowy: 2
+          shadowy: 2,
         },
-        inputs: 'c'
-      }
+        inputs: 'c',
+      },
     ])
     .on('end', () => {
       res.send(body);
@@ -217,7 +218,7 @@ app.post('/uploadBlob', upload.single('video'), ({ file }, res) => {
     .screenshots({
       timestamps: [0],
       filename,
-      size: '320x240'
+      size: '320x240',
     })
     .on('end', () => {
       res.send(file);
@@ -232,7 +233,7 @@ app.get('/img', (req, res) => {
   const ext = filename.split('/').pop();
   const head = {
     'Content-Length': fileSize,
-    'Content-Type': `image/${ext}`
+    'Content-Type': `image/${ext}`,
   };
   res.writeHead(200, head);
   fs.createReadStream(path).pipe(res);
@@ -251,7 +252,7 @@ app.get('/s3-download', async (req, res) => {
   const { filename } = req.query;
   const params = {
     Bucket: config.AWS_BUCKET_NAME,
-    Key: filename
+    Key: filename,
   };
   s3.getObject(params, (err, data) => {
     if (err) console.log(err, err.stack);
@@ -265,7 +266,7 @@ app.delete('/deleteObj', auth, ({ body }, res) => {
   const { filename } = body;
   const params = {
     Bucket: config.AWS_BUCKET_NAME,
-    Key: filename
+    Key: filename,
   };
   s3.deleteObject(params, (err, data) => {
     if (err) console.log(err, err.stack);
@@ -275,7 +276,7 @@ app.delete('/deleteObj', auth, ({ body }, res) => {
 
 app.use(express.static(path.join(__dirname, '../client/build')));
 app.get('/*', (req, res) =>
-  res.sendFile(path.join(__dirname, '../client/build', 'index.html'))
+  res.sendFile(path.join(__dirname, '../client/build', 'index.html')),
 );
 
 app.listen(app.get('port'), () => {

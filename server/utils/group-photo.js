@@ -2,6 +2,25 @@ const sharp = require('sharp');
 const axios = require('axios');
 const fs = require('fs');
 
+const chunkArray = (array, size) => {
+  if (!array) return [];
+  const firstChunk = array.slice(0, size);
+  if (!firstChunk.length) return array;
+  return [firstChunk].concat(chunkArray(array.slice(size, array.length), size));
+};
+
+const compositeInChunks = async (sharpImage, composites, size = 100) => {
+  const chunked = chunkArray(composites, size);
+  let composited = sharpImage;
+  for (let i = 0; i < chunked.length; i++) {
+    const buffer = await composited.toBuffer({ resolveWithObject: true });
+    composited = await sharp(buffer.data, {
+      raw: { ...buffer.info },
+    }).composite(chunked[i]);
+  }
+  return composited;
+};
+
 const fetchImg = async (url) => {
   try {
     const res = await axios({
@@ -14,72 +33,50 @@ const fetchImg = async (url) => {
   }
 };
 
-const chunkArray = (array, size) => {
-  if (!array) return [];
-  const firstChunk = array.slice(0, size);
-  if (!firstChunk.length) return array;
-  return [firstChunk].concat(chunkArray(array.slice(size, array.length), size));
-};
-
 const fetchImgs = async (imgs) => {
   const fetched = await Promise.all(imgs.map(fetchImg));
   return fetched.filter((img) => img !== null);
 };
 
-const createLayout = (imgs) => {
-  const aspectRatio = 1 + 1 / 3; // width / height (is determined by actual size of webcam element in the FE)
+const createImageLayout = (imgs) => {
+  const aspectRatio = 1 + 1 / 3;
 
   const count = imgs.length;
 
   const idealGridWidth = 2000;
-  const rowCount = Math.ceil(Math.sqrt(count));
+  const rowCellCount = Math.ceil(Math.sqrt(count));
+  const colCellCount = Math.ceil(count / rowCellCount);
 
-  const chunkedImgs = chunkArray(imgs, rowCount);
-  const colCount = chunkedImgs.length;
-
-  const imgWidth = Math.round(idealGridWidth / rowCount); // these need to be an integer
+  const imgWidth = Math.round(idealGridWidth / rowCellCount); // these need to be an integer
   const imgHeight = Math.round(imgWidth / aspectRatio);
 
-  const gridWidth = imgWidth * rowCount;
-  const gridHeight = colCount * imgHeight;
+  const gridWidth = imgWidth * rowCellCount;
+  const gridHeight = imgHeight * colCellCount;
 
   let top = 0;
-  const imgMap = chunkedImgs.map((row) => {
-    let left = 0;
-    const rowMap = row.map((img) => {
-      const imgSpecs = {
-        top: 0,
-        left,
-        width: imgWidth,
-        height: imgHeight,
-        img,
-      };
-
-      left = left + imgWidth;
-
-      return imgSpecs;
-    });
-
-    const rowSpecs = {
+  let left = 0;
+  const _imgs = imgs.map((img) => {
+    const specs = {
+      data: img,
       top,
-      left: 0,
-      width: imgWidth * row.length,
-      height: imgHeight,
-      imgs: rowMap,
+      left,
     };
 
-    top = top + imgHeight;
+    left = left + imgWidth;
+    if (left >= gridWidth) {
+      left = 0;
+      top = top + imgHeight;
+    }
 
-    return rowSpecs;
+    return specs;
   });
 
   return {
+    imgs: _imgs,
     height: gridHeight,
     width: gridWidth,
-    rowCount,
     imgWidth,
     imgHeight,
-    imgMap,
   };
 };
 
@@ -90,7 +87,7 @@ const createGroupPhoto = async (urls) => {
 
   const imgs = await fetchImgs(urls);
 
-  const { width, height, imgMap } = createLayout(imgs);
+  const layout = createImageLayout(imgs);
 
   await sharp('./uploads/CascadiaJSLong.png')
     .resize(null, brandingHeight)
@@ -98,62 +95,41 @@ const createGroupPhoto = async (urls) => {
   const imgLogo = await sharp(conferenceOutputPath);
   const logoMetadata = await imgLogo.metadata();
 
-  const totalWidth = width + padding * 2;
-  const totalHeight = height + logoMetadata.height + padding * 3;
+  const totalWidth = layout.width + padding * 2;
+  const totalHeight = layout.height + logoMetadata.height + padding * 3;
 
-  const inputs = await Promise.all(
-    imgMap.map(async (row) => {
-      const inputs = await Promise.all(
-        row.imgs.map(async (img) => {
-          const loaded = await sharp(img.img.data);
-          const input = await loaded
-            .resize(img.width, img.height)
-            .raw()
-            .toBuffer();
-
-          return {
-            input,
-            raw: { width: img.width, height: img.height, channels: 4 },
-            top: img.top,
-            left: img.left,
-          };
-        })
-      );
-
-      const rowInput = await sharp({
-        create: {
-          height: row.height,
-          width: row.width,
-          background: '#FFF',
-          channels: 3,
-        },
-      })
-        .composite(inputs)
+  const greetingsComposites = await Promise.all(
+    layout.imgs.map(async (img) => {
+      const loaded = await sharp(img.data.data);
+      const input = await loaded
+        .resize(layout.imgWidth, layout.imgHeight)
         .raw()
         .toBuffer();
 
       return {
-        input: rowInput,
-        raw: { width: row.width, height: row.height, channels: 4 },
-        top: row.top + padding,
-        left: row.left + padding,
+        input,
+        raw: { width: layout.imgWidth, height: layout.imgHeight, channels: 4 },
+        top: img.top + padding,
+        left: img.left + padding,
       };
-    })
+    }),
   );
 
-  const groupPhoto = await sharp({
+  const background = await sharp({
     create: {
       height: totalHeight,
       width: totalWidth,
       channels: 3,
       background: 'white',
     },
-  }).composite([
+  });
+
+  const groupPhoto = await compositeInChunks(background, [
     {
       input: {
         create: {
-          height,
-          width,
+          height: layout.height,
+          width: layout.width,
           background: '#EDF2F7',
           channels: 3,
         },
@@ -161,10 +137,10 @@ const createGroupPhoto = async (urls) => {
       top: padding,
       left: padding,
     },
-    ...inputs,
+    ...greetingsComposites,
     {
       input: conferenceOutputPath,
-      top: height + padding * 2,
+      top: layout.height + padding * 2,
       left: Math.floor(totalWidth / 2 - logoMetadata.width / 2),
     },
   ]);
@@ -175,10 +151,11 @@ const createGroupPhoto = async (urls) => {
 const createGroupPhotoStream = async (urls) => {
   try {
     const groupPhoto = await createGroupPhoto(urls);
-    console.log('Group Photo Processed');
+    console.log('Group Photo Processed', groupPhoto);
     const png = await groupPhoto.png({
       compressionLevel: 5,
       quality: 100,
+      progressive: true,
     });
     await png.toFile('./temp/group-photo.png');
     console.log('Group Photo Output to /temp');
