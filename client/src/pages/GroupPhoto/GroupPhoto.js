@@ -17,6 +17,7 @@ const GroupPhoto = () => {
         'Content-Type': 'application/json',
       },
     });
+    console.log('GOT RESULT', res)
     const json = await res.json();
     setFile(json);
     setIsGenerating(false);

@@ -86,7 +86,7 @@ app.get('/listGifs', async (_, res) => {
   res.send(result);
 });
 
-const groupPhotoPath = 'public/group_photo.png';
+const groupPhotoPath = 'public/group_photo.jpeg';
 
 app.post('/getGroupPhoto', async (_, res) => {
   const params = {
@@ -117,7 +117,9 @@ app.post('/createGroupPhoto', async (_, res) => {
       if (err) {
         console.log(err, err.stack);
       } else {
+        console.log(`Group Photo Uploaded to s3: ${groupPhotoPath}`);
         data.LastModified = Date.now();
+        console.log(data)
         res.send(data);
       }
     });

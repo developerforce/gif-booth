@@ -100,7 +100,7 @@ const createGroupPhoto = async (urls) => {
 
   const greetingsComposites = await Promise.all(
     layout.imgs.map(async (img) => {
-      const loaded = await sharp(img.data.data);
+      const loaded = await sharp(img.data.data).jpeg({ quality: 50 });
       const input = await loaded
         .resize(layout.imgWidth, layout.imgHeight)
         .raw()
@@ -148,18 +148,18 @@ const createGroupPhoto = async (urls) => {
   return groupPhoto;
 };
 
+const outputPath = './temp/group-photo.jpeg';
+
 const createGroupPhotoStream = async (urls) => {
   try {
     const groupPhoto = await createGroupPhoto(urls);
-    console.log('Group Photo Processed', groupPhoto);
-    const png = await groupPhoto.png({
-      compressionLevel: 5,
-      quality: 100,
-      progressive: true,
+    console.log('Group Photo Processed');
+    const jpeg = await groupPhoto.jpeg({
+      quality: 75,
     });
-    await png.toFile('./temp/group-photo.png');
-    console.log('Group Photo Output to /temp');
-    return fs.createReadStream('./temp/group-photo.png');
+    await jpeg.toFile(outputPath);
+    console.log(`Group Photo Output to ${outputPath}`);
+    return fs.createReadStream(outputPath);
   } catch (e) {
     console.log(e);
   }
