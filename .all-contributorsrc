@@ -48,6 +48,16 @@
       "contributions": [
         "userTesting"
       ]
+    },
+    {
+      "login": "gisete",
+      "name": "Gisete Kindahl",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/10730651?v=4",
+      "profile": "https://github.com/gisete",
+      "contributions": [
+        "design",
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
