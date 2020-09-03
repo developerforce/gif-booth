@@ -100,7 +100,7 @@ const createGroupPhoto = async (urls) => {
 
   const greetingsComposites = await Promise.all(
     layout.imgs.map(async (img) => {
-      const loaded = await sharp(img.data.data).jpeg({ quality: 50 });
+      const loaded = await sharp(img.data.data).jpeg({ quality: 75 });
       const input = await loaded
         .resize(layout.imgWidth, layout.imgHeight)
         .raw()
