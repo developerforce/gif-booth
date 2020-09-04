@@ -10,8 +10,7 @@ const AWS = require('aws-sdk');
 const config = require('../config');
 const { createGroupPhotoStream } = require('./utils/group-photo');
 
-const makeFileLocation = (file) =>
-  `${config.AWS_BUCKET_URL}/${file.Key}`;
+const makeFileLocation = (file) => `${config.AWS_BUCKET_URL}/${file.Key}`;
 
 const s3 = new AWS.S3({
   accessKeyId: config.AWS_ACCESS_KEY_ID,
@@ -87,10 +86,12 @@ app.get('/listGifs', async (_, res) => {
   res.send(result);
 });
 
+const groupPhotoPath = 'public/group_photo.jpeg';
+
 app.post('/getGroupPhoto', async (_, res) => {
   const params = {
     Bucket: config.AWS_BUCKET_NAME,
-    Prefix: 'public/group_photo.png'
+    Prefix: groupPhotoPath
   };
   const result = await s3.listObjects(params).promise();
   result.Contents = result.Contents.map((file) => ({
@@ -106,7 +107,7 @@ app.post('/createGroupPhoto', async (_, res) => {
     const urls = result.map((file) => makeFileLocation(file));
     const stream = await createGroupPhotoStream(urls);
     const params = {
-      Key: 'public/group_photo.png',
+      Key: groupPhotoPath,
       Bucket: config.AWS_BUCKET_NAME,
       Body: stream,
       ContentType: 'image/png',
@@ -116,6 +117,7 @@ app.post('/createGroupPhoto', async (_, res) => {
       if (err) {
         console.log(err, err.stack);
       } else {
+        console.log(`Group Photo Uploaded to s3: ${groupPhotoPath}`);
         data.LastModified = Date.now();
         res.send(data);
       }
