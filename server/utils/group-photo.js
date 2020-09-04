@@ -15,7 +15,7 @@ const compositeInChunks = async (sharpImage, composites, size = 100) => {
   for (let i = 0; i < chunked.length; i++) {
     const buffer = await composited.toBuffer({ resolveWithObject: true });
     composited = await sharp(buffer.data, {
-      raw: { ...buffer.info },
+      raw: { ...buffer.info }
     }).composite(chunked[i]);
   }
   return composited;
@@ -25,7 +25,7 @@ const fetchImg = async (url) => {
   try {
     const res = await axios({
       url,
-      responseType: 'arraybuffer',
+      responseType: 'arraybuffer'
     });
     return res;
   } catch (e) {
@@ -60,6 +60,8 @@ const createImageLayout = (imgs) => {
       data: img,
       top,
       left,
+      width: imgWidth,
+      height: imgHeight
     };
 
     left = left + imgWidth;
@@ -74,9 +76,35 @@ const createImageLayout = (imgs) => {
   return {
     imgs: _imgs,
     height: gridHeight,
-    width: gridWidth,
-    imgWidth,
-    imgHeight,
+    width: gridWidth
+  };
+};
+
+const compositeImg = async (img, offset) => {
+  const toSizedBuffer = (frame) =>
+    frame.resize(img.width, img.height).raw().toBuffer();
+
+  let input;
+  let firstFrame = await sharp(img.data.data);
+  try {
+    const { pages } = await firstFrame.metadata();
+    const page = Math.round(pages / 2) || 0;
+    middleFrame = await sharp(img.data.data, { page });
+    input = await toSizedBuffer(middleFrame);
+  } catch (e) {
+    // so far we have only seen faulty gifs cause this to catch
+    console.log(
+      'Failed to slice middle GIF frame (or "page"), defaulting to first frame.',
+      { url: img.data.config.url }
+    );
+    input = await toSizedBuffer(firstFrame);
+  }
+
+  return {
+    input,
+    raw: { width: img.width, height: img.height, channels: 4 },
+    top: img.top + offset,
+    left: img.left + offset
   };
 };
 
@@ -99,20 +127,7 @@ const createGroupPhoto = async (urls) => {
   const totalHeight = layout.height + logoMetadata.height + padding * 3;
 
   const greetingsComposites = await Promise.all(
-    layout.imgs.map(async (img) => {
-      const loaded = await sharp(img.data.data).jpeg({ quality: 75 });
-      const input = await loaded
-        .resize(layout.imgWidth, layout.imgHeight)
-        .raw()
-        .toBuffer();
-
-      return {
-        input,
-        raw: { width: layout.imgWidth, height: layout.imgHeight, channels: 4 },
-        top: img.top + padding,
-        left: img.left + padding,
-      };
-    }),
+    layout.imgs.map((img) => compositeImg(img, padding))
   );
 
   const background = await sharp({
@@ -120,8 +135,8 @@ const createGroupPhoto = async (urls) => {
       height: totalHeight,
       width: totalWidth,
       channels: 3,
-      background: 'white',
-    },
+      background: 'white'
+    }
   });
 
   const groupPhoto = await compositeInChunks(background, [
@@ -131,18 +146,18 @@ const createGroupPhoto = async (urls) => {
           height: layout.height,
           width: layout.width,
           background: '#EDF2F7',
-          channels: 3,
-        },
+          channels: 3
+        }
       },
       top: padding,
-      left: padding,
+      left: padding
     },
     ...greetingsComposites,
     {
       input: conferenceOutputPath,
       top: layout.height + padding * 2,
-      left: Math.floor(totalWidth / 2 - logoMetadata.width / 2),
-    },
+      left: Math.floor(totalWidth / 2 - logoMetadata.width / 2)
+    }
   ]);
 
   return groupPhoto;
@@ -155,7 +170,7 @@ const createGroupPhotoStream = async (urls) => {
     const groupPhoto = await createGroupPhoto(urls);
     console.log('Group Photo Processed');
     const jpeg = await groupPhoto.jpeg({
-      quality: 75,
+      quality: 75
     });
     await jpeg.toFile(outputPath);
     console.log(`Group Photo Output to ${outputPath}`);
