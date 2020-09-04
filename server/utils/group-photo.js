@@ -9,23 +9,6 @@ const chunkArray = (array, size) => {
   return [firstChunk].concat(chunkArray(array.slice(size, array.length), size))
 }
 
-const compositeInChunks = async (sharpImage, composites, size = 100) => {
-  const chunked = chunkArray(composites, size)
-  let composited = sharpImage
-
-  // this should be a Promise.all
-  // had a really hard time getting that working with "sharp" as overlayed images didnt seem to respect transparency
-  for (let i = 0; i < chunked.length; i += 1) {
-    // eslint-disable-next-line
-    const buffer = await composited.toBuffer({ resolveWithObject: true })
-    // eslint-disable-next-line
-    composited = await sharp(buffer.data, {
-      raw: { ...buffer.info },
-    }).composite(chunked[i])
-  }
-  return composited
-}
-
 const fetchImg = async (url) => {
   try {
     const res = await axios({
@@ -82,34 +65,37 @@ const createImageLayout = (imgs) => {
     imgs: _imgs,
     height: gridHeight,
     width: gridWidth,
+    imgWidth,
+    imgHeight,
+    rowCellCount,
+    colCellCount,
   }
 }
 
-const compositeImg = async (img, offset) => {
-  const toSizedBuffer = (frame) =>
-    frame.resize(img.width, img.height).raw().toBuffer()
+const compositeGif = async (buffer, { width, height, top, left, id }) => {
+  const toSizedBuffer = (frame) => frame.resize(width, height).raw().toBuffer()
 
   let input
-  const firstFrame = await sharp(img.data.data)
+  const firstFrame = await sharp(buffer)
   try {
     const { pages } = await firstFrame.metadata()
     const page = Math.round(pages / 2) || 0
-    const middleFrame = await sharp(img.data.data, { page })
+    const middleFrame = await sharp(buffer, { page })
     input = await toSizedBuffer(middleFrame)
   } catch (e) {
     // so far we have only seen faulty gifs cause this to catch
     console.log(
       'Failed to slice middle GIF frame (or "page"), defaulting to first frame.',
-      { url: img.data.config.url },
+      { id },
     )
     input = await toSizedBuffer(firstFrame)
   }
 
   return {
     input,
-    raw: { width: img.width, height: img.height, channels: 4 },
-    top: img.top + offset,
-    left: img.left + offset,
+    raw: { width, height, channels: 4 },
+    top,
+    left,
   }
 }
 
@@ -131,8 +117,41 @@ const createGroupPhoto = async (urls) => {
   const totalWidth = layout.width + padding * 2
   const totalHeight = layout.height + logoMetadata.height + padding * 3
 
+  const imgRows = chunkArray(layout.imgs, layout.rowCellCount)
+
+  // compositing the images row by row before the main composite to create the group photo
+  // compositing all assets at once (> 300 or so) made sharp crash
   const greetingsComposites = await Promise.all(
-    layout.imgs.map((img) => compositeImg(img, padding)),
+    imgRows.map(async (row, i) => {
+      const composites = await Promise.all(
+        row.map((img) =>
+          compositeGif(img.data.data, {
+            top: 0,
+            left: img.left,
+            width: layout.imgWidth,
+            height: layout.imgHeight,
+            id: img.data.config.url,
+          }),
+        ),
+      )
+      const buffer = await sharp({
+        create: {
+          height: layout.imgHeight,
+          width: layout.rowCellCount * layout.imgWidth,
+          background: '#EDF2F7',
+          channels: 3,
+        },
+      })
+        .composite(composites)
+        .toBuffer({ resolveWithObject: true })
+
+      return {
+        input: buffer.data,
+        raw: buffer.info,
+        top: i * layout.imgHeight + padding,
+        left: padding,
+      }
+    }),
   )
 
   const background = await sharp({
@@ -144,25 +163,29 @@ const createGroupPhoto = async (urls) => {
     },
   })
 
-  const groupPhoto = await compositeInChunks(background, [
-    {
-      input: {
-        create: {
-          height: layout.height,
-          width: layout.width,
-          background: '#EDF2F7',
-          channels: 3,
-        },
+  const backdropComposite = {
+    input: {
+      create: {
+        height: layout.height,
+        width: layout.width,
+        background: '#EDF2F7',
+        channels: 3,
       },
-      top: padding,
-      left: padding,
     },
+    top: padding,
+    left: padding,
+  }
+
+  const logoComposite = {
+    input: conferenceOutputPath,
+    top: layout.height + padding * 2,
+    left: Math.floor(totalWidth / 2 - logoMetadata.width / 2),
+  }
+
+  const groupPhoto = await background.composite([
+    backdropComposite,
     ...greetingsComposites,
-    {
-      input: conferenceOutputPath,
-      top: layout.height + padding * 2,
-      left: Math.floor(totalWidth / 2 - logoMetadata.width / 2),
-    },
+    logoComposite,
   ])
 
   return groupPhoto
