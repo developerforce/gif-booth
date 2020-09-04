@@ -9,8 +9,3 @@ temp/*
 !temp/.gitkeep
 # ignore files in folder
 uploads/*
-# except
-!uploads/placeholder.png
-!uploads/placeholder.webm
-!uploads/CascadiaJS.png
-!uploads/CascadiaJSLong.png

@@ -104,11 +104,11 @@ const createGroupPhoto = async (urls) => {
   const brandingHeight = 80
   const conferenceOutputPath = './temp/conference_logo.png'
 
-  const imgs = await fetchImgs(urls)
+  const imgs = await fetchImgs(urls.slice(0, 80))
 
   const layout = createImageLayout(imgs)
 
-  await sharp('./uploads/CascadiaJSLong.png')
+  await sharp('./branding/Logo.png')
     .resize(null, brandingHeight)
     .toFile(conferenceOutputPath)
   const imgLogo = await sharp(conferenceOutputPath)

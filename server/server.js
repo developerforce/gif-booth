@@ -86,14 +86,14 @@ app.get('/listGifs', async (_, res) => {
   }
 })
 
-const groupPhotoPath = 'public/group_photo.jpeg';
+const groupPhotoPath = 'public/group_photo.jpeg'
 
 app.post('/getGroupPhoto', async (_, res) => {
   const params = {
     Bucket: config.AWS_BUCKET_NAME,
-    Prefix: groupPhotoPath
-  };
-  const result = await s3.listObjects(params).promise();
+    Prefix: groupPhotoPath,
+  }
+  const result = await s3.listObjects(params).promise()
   result.Contents = result.Contents.map((file) => ({
     ...file,
     Location: makeFileLocation(file),
@@ -118,9 +118,9 @@ app.post('/createGroupPhoto', async (_, res) => {
       if (err) {
         console.log(err, err.stack)
       } else {
-        console.log(`Group Photo Uploaded to s3: ${groupPhotoPath}`);
-        data.LastModified = Date.now();
-        res.send(data);
+        console.log(`Group Photo Uploaded to s3: ${groupPhotoPath}`)
+        data.LastModified = Date.now()
+        res.send(data)
       }
     })
   } catch (e) {
@@ -175,15 +175,15 @@ app.post('/uploadGIF', ({ body }, res) => {
   uploadGIF(res, filename, 'temp', () => {
     fs.unlink(`uploads/${filename}.webm`, () =>
       console.log('.webm file was deleted'),
-    );
-  });
-});
+    )
+  })
+})
 
 app.post('/video2gif', upload.none(), ({ body }, res) => {
   const { videoId, text, fontsize } = body
   ffmpeg()
     .input(`uploads/${videoId}.webm`)
-    .input('uploads/CascadiaJS.png')
+    .input('branding/LogoCompact.png')
     .complexFilter([
       '[1]scale=iw*1:-1[a]',
       '[0][a]overlay=x=20:y=20[b]',
@@ -214,8 +214,8 @@ app.post('/video2gif', upload.none(), ({ body }, res) => {
 })
 
 app.post('/uploadBlob', upload.single('video'), ({ file }, res) => {
-  res.send(file);
-});
+  res.send(file)
+})
 
 app.get('/img', (req, res) => {
   const { filename } = req.query
