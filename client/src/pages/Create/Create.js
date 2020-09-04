@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import download from 'downloadjs';
 import { Link } from 'react-router-dom';
 import './Create.css';
@@ -21,18 +21,17 @@ const PHASE_END = 'phase_end';
 
 function Create({ history }) {
   const [phase, setPhase] = useState(PHASE_START);
-  const [videoId, setVideoId] = useState();
   const [isWebcamReady, setIsWebcamReady] = useState(false);
-  const [imageUrl, setImageUrl] = useState();
+  const [gifId, setGifId] = useState();
   const [text, setText] = useState('');
+  const [isProcessingGif, setIsProcessingGif] = useState('');
   const [isUploading, setUploading] = useState(false);
   const [warning, setWarning] = useState(
     !!window.MediaRecorder ? false : WARNING_BROWSER
   );
 
   const retry = () => {
-    setVideoId(null);
-    setImageUrl(null);
+    setGifId(null);
     setText('');
     setPhase(PHASE_START);
     setWarning(false);
@@ -47,42 +46,39 @@ function Create({ history }) {
   );
 
   const createGIF = useCallback(
-    (callback) => {
+    (vidId, callback) => {
+      setIsProcessingGif(true);
       let formData = new FormData();
       const fontsize = text.length && 340 / text.length;
       formData.append('text', text);
       formData.append('fontsize', fontsize);
-      formData.append('videoId', videoId);
+      formData.append('videoId', vidId);
       fetch('/video2gif', {
         method: 'POST',
-        body: formData,
+        body: formData
       })
         .then((res) => res.json())
         .then((response) => {
           if (!Object.keys(response).length) {
             throw Error;
           }
-          setImageUrl(response.videoId);
+          setGifId(response.videoId);
           if (callback) callback();
         })
-        .catch(onError);
+        .catch(onError)
+        .finally(() => setIsProcessingGif(false));
     },
-    [setImageUrl, onError, text, videoId]
+    [setGifId, onError, text]
   );
-
-  useEffect(() => {
-    if (!videoId) return;
-    createGIF();
-  }, [videoId, createGIF]);
 
   const upload = () => {
     setUploading(true);
     fetch('/uploadGIF', {
       method: 'POST',
-      body: JSON.stringify({ filename: imageUrl }),
+      body: JSON.stringify({ filename: gifId }),
       headers: {
-        'Content-Type': 'application/json',
-      },
+        'Content-Type': 'application/json'
+      }
     })
       .then(() => history.push('/home'))
       .catch(onError);
@@ -94,7 +90,7 @@ function Create({ history }) {
     formData.append('video', blob);
     fetch('/uploadBlob', {
       method: 'POST',
-      body: formData,
+      body: formData
     })
       .then((res) => res.ok && res.json())
       .then((response) => {
@@ -103,15 +99,15 @@ function Create({ history }) {
         }
         const { filename } = response;
         const videoId = filename.replace('.webm', '');
-        setVideoId(videoId);
+        createGIF(videoId);
       })
       .catch(onError);
   };
 
   const downloadGif = async () => {
-    const res = await fetch(`/download?filename=${imageUrl}`);
+    const res = await fetch(`/download?filename=${gifId}`);
     const fileBlob = await res.blob();
-    download(fileBlob, `${imageUrl}.gif`);
+    download(fileBlob, `${gifId}.gif`);
   };
 
   const header = (
@@ -130,7 +126,7 @@ function Create({ history }) {
 
   const warningMap = {
     [WARNING_GENERIC]: <GenericWarning retry={retry} />,
-    [WARNING_BROWSER]: <BrowserWarning />,
+    [WARNING_BROWSER]: <BrowserWarning />
   };
 
   return (
@@ -144,10 +140,10 @@ function Create({ history }) {
       ) : (
         <div className="gif-create-content column">
           <div className="gif-image-container">
-            {imageUrl ? (
+            {gifId ? (
               <img
                 className="gif-video"
-                src={`/img?filename=${imageUrl}&reload=${phase === PHASE_END}`}
+                src={`/img?filename=${gifId}&reload=${phase === PHASE_END}`}
                 alt="Your GIF"
               />
             ) : (
@@ -195,12 +191,17 @@ function Create({ history }) {
                 value={text}
               />
               <div className="gif-button-group">
-                <Button onClick={() => setPhase(PHASE_END)} secondary grey>
+                <Button
+                  disabled={isProcessingGif}
+                  onClick={() => setPhase(PHASE_END)}
+                  secondary
+                  grey
+                >
                   Skip
                 </Button>
                 <Button
-                  disabled={text === ''}
-                  onClick={() => createGIF(() => setPhase(PHASE_END))}
+                  disabled={text === '' || isProcessingGif}
+                  onClick={() => createGIF(gifId, () => setPhase(PHASE_END))}
                 >
                   Save Caption
                 </Button>
@@ -213,7 +214,7 @@ function Create({ history }) {
                 <Button
                   icon="download"
                   onClick={downloadGif}
-                  disabled={isUploading}
+                  disabled={isUploading || isProcessingGif}
                   secondary
                   grey
                 >
@@ -229,7 +230,12 @@ function Create({ history }) {
                   Retry
                 </Button>
               </div>
-              <Button icon="share" onClick={upload} noClick={isUploading}>
+              <Button
+                disabled={isProcessingGif}
+                icon="share"
+                onClick={upload}
+                noClick={isUploading}
+              >
                 {isUploading ? 'Uploading...' : 'Share With Conference'}
               </Button>
             </>
