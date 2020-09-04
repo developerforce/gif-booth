@@ -183,7 +183,7 @@ app.post('/video2gif', upload.none(), ({ body }, res) => {
   const { videoId, text, fontsize } = body
   ffmpeg()
     .input(`uploads/${videoId}.webm`)
-    .input('branding/LogoCompact.png')
+    .input('public/branding/LogoCompact.png')
     .complexFilter([
       '[1]scale=iw*1:-1[a]',
       '[0][a]overlay=x=20:y=20[b]',

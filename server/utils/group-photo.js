@@ -108,7 +108,7 @@ const createGroupPhoto = async (urls) => {
 
   const layout = createImageLayout(imgs)
 
-  await sharp('./branding/Logo.png')
+  await sharp('./public/branding/Logo.png')
     .resize(null, brandingHeight)
     .toFile(conferenceOutputPath)
   const imgLogo = await sharp(conferenceOutputPath)
