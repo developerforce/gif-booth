@@ -1,7 +1,7 @@
-import React from 'react';
-import cx from 'classnames';
-import Icon from '../Icon';
-import './Button.css';
+import React from 'react'
+import cx from 'classnames'
+import Icon from '../Icon'
+import './Button.css'
 
 const Button = ({
   children,
@@ -26,8 +26,9 @@ const Button = ({
         !secondary && 'primary',
         secondary && 'secondary',
         grey && 'grey',
-        red && 'red'
+        red && 'red',
       )}
+      type="button"
       {...props}
     >
       {icon && (
@@ -37,11 +38,11 @@ const Button = ({
       )}
       {children}
     </button>
-  );
-};
+  )
+}
 
 Button.defaultProps = {
   className: '',
-};
+}
 
-export default Button;
+export default Button

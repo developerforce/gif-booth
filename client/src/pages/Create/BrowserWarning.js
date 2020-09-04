@@ -1,24 +1,24 @@
-import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
-import Warning from '../../components/Warning';
+import React, { useState } from 'react'
+import { useHistory } from 'react-router-dom'
+import Warning from '../../components/Warning'
 
 const BrowserWarning = () => {
-  const history = useHistory();
-  const [userUploadGIF, setUserUploadGIF] = useState(null);
-  const [isUploading, setIsUploading] = useState(false);
+  const history = useHistory()
+  const [userUploadGIF, setUserUploadGIF] = useState(null)
+  const [isUploading, setIsUploading] = useState(false)
 
-  const onUserChoseGIF = (e) => setUserUploadGIF(e.target.files[0]);
+  const onUserChoseGIF = (e) => setUserUploadGIF(e.target.files[0])
 
   const uploadUserGIF = async () => {
-    setIsUploading(true);
-    let formData = new FormData();
-    formData.append('gif', userUploadGIF);
+    setIsUploading(true)
+    const formData = new FormData()
+    formData.append('gif', userUploadGIF)
     const res = await fetch('/uploadUserGIF', {
       method: 'POST',
       body: formData,
-    });
-    if (res.ok) history.push('/home');
-  };
+    })
+    if (res.ok) history.push('/home')
+  }
 
   return (
     <Warning
@@ -38,7 +38,7 @@ const BrowserWarning = () => {
       ctaIcon="upload"
       ctaDisabled={!userUploadGIF || isUploading}
     />
-  );
-};
+  )
+}
 
-export default BrowserWarning;
+export default BrowserWarning

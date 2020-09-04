@@ -1,7 +1,7 @@
-import React from 'react';
-import cx from 'classnames';
-import logoSrc from '../../logo.svg';
-import './Page.css';
+import React from 'react'
+import cx from 'classnames'
+import logoSrc from '../../logo.svg'
+import './Page.css'
 
 const Page = ({ className, children, header, headerClassName }) => (
   <>
@@ -13,6 +13,6 @@ const Page = ({ className, children, header, headerClassName }) => (
       <img alt="fostive logo" src={logoSrc} />
     </footer>
   </>
-);
+)
 
-export default Page;
+export default Page

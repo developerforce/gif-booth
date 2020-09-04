@@ -9,6 +9,7 @@
     "bootstrap": "^4.5.0",
     "classnames": "^2.2.6",
     "downloadjs": "^1.4.7",
+    "prop-types": "^15.7.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-paginate": "^6.3.2",
@@ -23,9 +24,6 @@
     "eject": "react-scripts eject"
   },
   "proxy": "http://localhost:3001",
-  "eslintConfig": {
-    "extends": "react-app"
-  },
   "browserslist": {
     "production": [
       ">0.2%",

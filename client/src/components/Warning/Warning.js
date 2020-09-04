@@ -1,8 +1,8 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import Icon from '../Icon';
-import Button from '../Button';
-import './Warning.css';
+import React from 'react'
+import PropTypes from 'prop-types'
+import Icon from '../Icon'
+import Button from '../Button'
+import './Warning.css'
 
 const Warning = ({
   title,
@@ -29,7 +29,7 @@ const Warning = ({
       {ctaLabel}
     </Button>
   </div>
-);
+)
 
 Warning.propTypes = {
   title: PropTypes.string.isRequired,
@@ -40,7 +40,7 @@ Warning.propTypes = {
   ctaIcon: PropTypes.string,
   ctaDisabled: PropTypes.bool,
   warningIcon: PropTypes.string,
-};
+}
 
 Warning.defaultProps = {
   content: null,
@@ -49,6 +49,6 @@ Warning.defaultProps = {
   ctaIcon: null,
   ctaDisabled: false,
   warningIcon: 'exclamation-triangle',
-};
+}
 
-export default Warning;
+export default Warning
