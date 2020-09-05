@@ -16,7 +16,7 @@
     "client:build": "react-scripts build",
     "client:test": "react-scripts test",
     "client:eject": "react-scripts eject",
-    "heroku-postbuild": "cd client && npm install --only=dev && npm install && npm run build",
+    "heroku-postbuild": "npm install && npm run build",
     "lint": "./node_modules/.bin/eslint --fix \"{client/src,server}/**/*.{js,jsx}\"",
     "format": "npx prettier --write \"{client/src,server}*/**/*.{js,jsx,css}\"",
     "test": "echo \"Error: no test specified\" && exit 1"
