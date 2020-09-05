@@ -5,6 +5,9 @@
   "author": "",
   "license": "ISC",
   "main": "index.js",
+  "engines": {
+    "node": "v12.18.3"
+  },
   "scripts": {
     "dev": "NODE_ENV=development concurrently \"npm run server:start\" \"npm run client:start\"",
     "start": "concurrently \"npm run server:start\" \"npm run client:start\"",
