@@ -148,19 +148,18 @@ app.post('/createGroupPhoto', async (_, res) => {
 
 const uploadGIF = async (res, filename, folderName, onSuccess = () => {}) => {
   const filepath = `${folderName}/${filename}.gif`
-  const fileStream = fs.createReadStream(filepath)
-  const GifKey = `${GREETING_PREFIX}${filename}.gif`
-  const PhotoKey = `${PHOTO_PREFIX}${filename}.jpeg`
-
-  const params = {
-    Key: GifKey,
-    Bucket: config.AWS_BUCKET_NAME,
-    Body: fileStream,
-    ContentType: 'image/gif',
-    ACL: 'public-read',
-  }
-
   try {
+    const fileStream = fs.createReadStream(filepath)
+    const GifKey = `${GREETING_PREFIX}${filename}.gif`
+    const PhotoKey = `${PHOTO_PREFIX}${filename}.jpeg`
+
+    const params = {
+      Key: GifKey,
+      Bucket: config.AWS_BUCKET_NAME,
+      Body: fileStream,
+      ContentType: 'image/gif',
+      ACL: 'public-read',
+    }
     const data = await s3.upload(params).promise()
     console.log('Uploaded user gif to', data.Location)
 
@@ -187,7 +186,7 @@ const uploadGIF = async (res, filename, folderName, onSuccess = () => {}) => {
       console.log(`${jpegPath} was deleted after upload`),
     )
   } catch (e) {
-    console.log(e, e.stack)
+    console.log(e, e.stack, filepath)
     res.status(500).send(e)
   }
 }
