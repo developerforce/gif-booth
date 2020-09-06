@@ -118,12 +118,13 @@ const fetchImageBuffer = (image) => {
 }
 
 app.post('/createGroupPhoto', async (req, res) => {
-  req.setTimeout(500000)
   try {
+    console.log('Starting group photo creation')
     const images = await listByPrefix(PHOTO_PREFIX)
     const buffers = await Promise.all(
       images.map((image) => fetchImageBuffer(image)),
     )
+    console.log('Group photo input buffers fetched from s3')
     const stream = await createGroupPhotoStream(buffers)
     if (!stream) return
     const params = {
