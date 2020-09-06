@@ -79,7 +79,7 @@ const listByPrefix = async (Prefix) => {
   const OrderedContents = Contents.map((file) => ({
     ...file,
     Location: getFileLocation(file),
-  })).reverse()
+  })).sort((a, b) => b.LastModified - a.LastModified)
 
   return OrderedContents
 }
