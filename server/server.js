@@ -7,6 +7,7 @@ const multer = require('multer')
 const path = require('path')
 const fs = require('fs')
 const AWS = require('aws-sdk')
+const { Server } = require('ws')
 const { v4: uuidv4 } = require('uuid')
 const config = require('../config')
 const {
@@ -88,63 +89,6 @@ app.get('/listGifs', async (_, res) => {
   try {
     const result = await listByPrefix(GREETING_PREFIX)
     res.send(result)
-  } catch (e) {
-    console.log(e)
-  }
-})
-
-const groupPhotoPath = 'public/group_photo.jpeg'
-
-app.post('/getGroupPhoto', async (_, res) => {
-  const params = {
-    Bucket: config.AWS_BUCKET_NAME,
-    Prefix: groupPhotoPath,
-  }
-  const result = await s3.listObjects(params).promise()
-  result.Contents = result.Contents.map((file) => ({
-    ...file,
-    Location: getFileLocation(file),
-  }))
-  res.send(result)
-})
-
-const fetchImageBuffer = (image) => {
-  const params = { Bucket: config.AWS_BUCKET_NAME, Key: image.Key }
-  return new Promise((resolve, reject) =>
-    s3.getObject(params, (error, result) =>
-      error ? reject(error) : resolve(result.Body),
-    ),
-  )
-}
-
-app.post('/createGroupPhoto', async (req, res) => {
-  try {
-    console.log('Starting group photo creation')
-    const images = await listByPrefix(PHOTO_PREFIX)
-    const buffers = await Promise.all(
-      images.map((image) => fetchImageBuffer(image)),
-    )
-    console.log('Group photo input buffers fetched from s3')
-    const stream = await createGroupPhotoStream(buffers)
-    if (!stream) return
-    const params = {
-      Key: groupPhotoPath,
-      Bucket: config.AWS_BUCKET_NAME,
-      Body: stream,
-      ContentType: 'image/png',
-      ACL: 'public-read',
-    }
-    s3.upload(params, (err, data) => {
-      if (err) {
-        console.log(err, err.stack)
-      } else {
-        console.log(`Group photo uploaded to s3: ${groupPhotoPath}`)
-        res.send({
-          ...data,
-          LastModified: Date.now(),
-        })
-      }
-    })
   } catch (e) {
     console.log(e)
   }
@@ -308,6 +252,85 @@ app.get('/*', (req, res) =>
   res.sendFile(path.join(__dirname, '../client/build', 'index.html')),
 )
 
-app.listen(app.get('port'), () => {
+const server = app.listen(app.get('port'), () => {
   console.log(`Find the server at: http://localhost:${app.get('port')}/`)
+})
+
+const wss = new Server({ server })
+
+const groupPhotoPath = 'public/group_photo.jpeg'
+
+app.post('/getGroupPhoto', async (_, res) => {
+  const params = {
+    Bucket: config.AWS_BUCKET_NAME,
+    Prefix: groupPhotoPath,
+  }
+  const result = await s3.listObjects(params).promise()
+  result.Contents = result.Contents.map((file) => ({
+    ...file,
+    Location: getFileLocation(file),
+  }))
+  res.send(result)
+})
+
+const fetchImageBuffer = (image) => {
+  const params = { Bucket: config.AWS_BUCKET_NAME, Key: image.Key }
+  return new Promise((resolve, reject) =>
+    s3.getObject(params, (error, result) =>
+      error ? reject(error) : resolve(result.Body),
+    ),
+  )
+}
+
+app.post('/createGroupPhoto', async (req, res) => {
+  res.send({ message: 'Starting group photo processing' })
+  try {
+    console.log('Starting group photo creation')
+    const images = await listByPrefix(PHOTO_PREFIX)
+    const buffers = await Promise.all(
+      images.map((image) => fetchImageBuffer(image)),
+    )
+    console.log('Group photo input buffers fetched from s3')
+    const stream = await createGroupPhotoStream(buffers)
+    if (!stream) return
+    const params = {
+      Key: groupPhotoPath,
+      Bucket: config.AWS_BUCKET_NAME,
+      Body: stream,
+      ContentType: 'image/png',
+      ACL: 'public-read',
+    }
+    s3.upload(params, (err, data) => {
+      if (err) {
+        console.log(err, err.stack)
+      } else {
+        console.log(`Group photo uploaded to s3: ${groupPhotoPath}`)
+        const _data = {
+          ...data,
+          LastModified: Date.now(),
+        }
+        wss.clients.forEach((client) => {
+          client.send(
+            JSON.stringify({
+              id: 'group-photo',
+              status: 200,
+              data: _data,
+              message: 'Group photo processed successfully',
+            }),
+          )
+        })
+      }
+    })
+  } catch (e) {
+    wss.clients.forEach((client) => {
+      client.send(
+        JSON.stringify({
+          id: 'group-photo',
+          status: 500,
+          message: 'Group photo processing failed',
+          error: e,
+        }),
+      )
+    })
+  }
 })

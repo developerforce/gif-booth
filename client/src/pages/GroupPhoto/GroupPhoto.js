@@ -4,6 +4,10 @@ import Page from '../../components/Page'
 import { downloadFromS3 } from '../../utils/download'
 import './GroupPhoto.css'
 
+const ws = new WebSocket(
+  `ws://${window.location.hostname}:${process.env.PORT || 3001}`,
+)
+
 const GroupPhoto = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [isGenerating, setIsGenerating] = useState(false)
@@ -11,15 +15,12 @@ const GroupPhoto = () => {
 
   const createGroupPhoto = async () => {
     setIsGenerating(true)
-    const res = await fetch('/createGroupPhoto', {
+    fetch('/createGroupPhoto', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
     })
-    const json = await res.json()
-    setFile(json)
-    setIsGenerating(false)
   }
 
   const getGroupPhoto = async () => {
@@ -36,6 +37,16 @@ const GroupPhoto = () => {
 
   useEffect(() => {
     getGroupPhoto()
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data)
+      if (data.id !== 'group-photo') return
+      if (data.status === 200) {
+        setFile(data.data)
+      } else {
+        console.log(data.message, data.error)
+      }
+      setIsGenerating(false)
+    }
   }, [])
 
   const header = <h1>Create Group Photo</h1>
