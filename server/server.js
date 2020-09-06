@@ -117,7 +117,8 @@ const fetchImageBuffer = (image) => {
   )
 }
 
-app.post('/createGroupPhoto', async (_, res) => {
+app.post('/createGroupPhoto', async (req, res) => {
+  req.setTimeout(500000)
   try {
     const images = await listByPrefix(PHOTO_PREFIX)
     const buffers = await Promise.all(
