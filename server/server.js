@@ -201,11 +201,11 @@ app.post('/uploadUserGIF', upload.single('gif'), async (req, res) => {
     })
   } else {
     const filename = gif.filename.replace('.gif', '')
-    await uploadGIF(res, filename, 'uploads')
+    uploadGIF(res, filename, 'uploads')
   }
 })
 
-app.post('/uploadGIF', async ({ body }, res) => {
+app.post('/uploadGIF', ({ body }, res) => {
   const { filename } = body
   uploadGIF(res, filename, 'temp', () => {
     const filepath = `uploads/${filename}.webm`
