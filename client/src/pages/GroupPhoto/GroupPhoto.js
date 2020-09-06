@@ -5,7 +5,9 @@ import { downloadFromS3 } from '../../utils/download'
 import './GroupPhoto.css'
 
 const ws = new WebSocket(
-  `ws://${window.location.hostname}:${process.env.PORT || 3001}`,
+  `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${
+    window.location.hostname
+  }:${process.env.PORT || 3001}`,
 )
 
 const GroupPhoto = () => {
