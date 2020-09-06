@@ -7,6 +7,7 @@ const multer = require('multer')
 const path = require('path')
 const fs = require('fs')
 const AWS = require('aws-sdk')
+const { v4: uuidv4 } = require('uuid')
 const config = require('../config')
 const {
   outputGifToJpeg,
@@ -38,9 +39,10 @@ const storage = multer.diskStorage({
     cb(null, './uploads/')
   },
   filename(req, file, cb) {
-    let filename = `${Date.now()}.${file.originalname.split('.')[1]}`
+    const id = uuidv4()
+    let filename = `${id}.${file.originalname.split('.')[1]}`
     if (req.path === '/uploadBlob') {
-      filename = `${Date.now()}.webm`
+      filename = `${id}.webm`
     }
     cb(null, filename)
   },
@@ -247,6 +249,7 @@ app.post('/video2gif', upload.none(), ({ body }, res) => {
 })
 
 app.post('/uploadBlob', upload.single('video'), ({ file }, res) => {
+  console.log('Uploading', file)
   res.send(file)
 })
 
