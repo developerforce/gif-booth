@@ -4,11 +4,14 @@ import Page from '../../components/Page'
 import { downloadFromS3 } from '../../utils/download'
 import './GroupPhoto.css'
 
-const ws = new WebSocket(
-  `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${
-    window.location.hostname
-  }:${process.env.PORT || 3001}`,
-)
+const HOST = window.location.origin
+  .replace(/^http/, 'ws')
+  .replace('3000', '3001')
+const ws = new WebSocket(HOST)
+
+// `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${
+//   window.location.hostname
+// }:${process.env.PORT || 3001}`,
 
 const GroupPhoto = () => {
   const [isLoading, setIsLoading] = useState(true)
