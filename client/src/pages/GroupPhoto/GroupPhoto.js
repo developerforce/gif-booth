@@ -2,16 +2,8 @@ import React, { useEffect, useState } from 'react'
 import Button from '../../components/Button'
 import Page from '../../components/Page'
 import { downloadFromS3 } from '../../utils/download'
+import { onWsEvent } from '../../websockets'
 import './GroupPhoto.css'
-
-const HOST = window.location.origin
-  .replace(/^http/, 'ws')
-  .replace('3000', '3001')
-const ws = new WebSocket(HOST)
-
-// `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${
-//   window.location.hostname
-// }:${process.env.PORT || 3001}`,
 
 const GroupPhoto = () => {
   const [isLoading, setIsLoading] = useState(true)
@@ -42,16 +34,14 @@ const GroupPhoto = () => {
 
   useEffect(() => {
     getGroupPhoto()
-    ws.onmessage = (event) => {
-      const data = JSON.parse(event.data)
-      if (data.id !== 'group-photo') return
+    onWsEvent('group-photo', (data) => {
       if (data.status === 200) {
         setFile(data.data)
       } else {
         console.log(data.message, data.error)
       }
       setIsGenerating(false)
-    }
+    })
   }, [])
 
   const header = <h1>Create Group Photo</h1>
