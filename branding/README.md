@@ -5,3 +5,8 @@ Logo.png
 LogoCompact.png
   - 80px height, width, or both
   - used top left of the greeting gif
+
+Edit app colors in branding.css:
+  - uses css variables
+  - located in `client/src/branding.css`
+

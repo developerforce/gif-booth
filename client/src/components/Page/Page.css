@@ -21,7 +21,7 @@
 
 footer {
   height: 94px;
-  background: #f4f4f4;
+  background: var(--color-secondary-200);
   padding: 0 20px;
 }
 

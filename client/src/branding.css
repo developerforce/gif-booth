@@ -1,0 +1,25 @@
+:root {
+  --color-primary-100: #ebf8ff;
+  --color-primary-500: #4299E1;
+  --color-primary-600: #3182ce;
+  --color-primary-700: #2b6cb0;
+  --color-primary-800: #2c5282;
+  /* app's "black" color, used for primary text etc */
+  --color-primary-900: #2a4365;
+  /* just a faded v of 900 to create an accent between icon and text in CTAs */
+  --color-primary-900-faded: #5a7597;
+
+  --color-secondary-100: #f7fafc;
+  --color-secondary-200: #edf2f7;
+  --color-secondary-400: #CBD5E0;
+  --color-secondary-500: #A0AEC0;
+  --color-secondary-600: #718096;
+  --color-secondary-700: #4A5568;
+
+  --color-background: white;
+
+  --color-error-300: #FEB2B2;
+  --color-error-500: #f56565;
+  --color-error-600: #E53E3E;
+  --color-error-700: #C53030;
+}

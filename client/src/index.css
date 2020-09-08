@@ -48,7 +48,7 @@ html {
 
 h1,
 h2 {
-  color: #2a4365;
+  color: var(--color-primary-900);
   font-size: 16px;
   display: inline;
 }
@@ -65,7 +65,7 @@ h2 {
 p {
   font-size: 14px;
   font-weight: lightest;
-  color: #718096;
+  color: var(--color-secondary-600);
   margin: unset;
 }
 
@@ -102,7 +102,7 @@ a {
   font-size: 14px;
   height: min-content;
   border-radius: 6px;
-  color: #5a7597;
+  color: var(--color-primary-900-faded);
 }
 
 .gif-button-2.inline {
@@ -118,21 +118,21 @@ a {
   height: 12px;
   width: 12px;
   margin-left: 8px;
-  color: #2c5282;
+  color: var(--color-primary-800);
 }
 
 .gif-button-2:hover {
-  color: #2a4365;
+  color: var(--color-primary-900);
 }
 
 .gif-button-2.active {
-  color: white;
-  background: #2c5282;
+  color: var(--color-background);
+  background: var(--color-primary-800);
   pointer-events: none;
 }
 
 .gif-image-container {
-  background: #edf2f7;
+  background: var(--color-secondary-200);
   width: 100%;
   border-radius: 12px;
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05);

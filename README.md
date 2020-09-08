@@ -38,6 +38,7 @@ If you are using your own S3 instance please provide the following configuration
 
 GIF Booth uses ffmpeg to do video processing, you'll need to have `ffmpeg` installed on your computer. On Heroku we will use the [heroku-buildpack-ffmpeg-latest](https://elements.heroku.com/buildpacks/jonathanong/heroku-buildpack-ffmpeg-latest), more instructions on how to use it on the Deployment section.
 
+
 ### Configuration
 
 Currently, GIF Booth doesn't have an admin interface but it provide an URL endpoint for image moderation, if you want to use this feature please provide the following configuration parameters as environment variables:
@@ -78,7 +79,11 @@ npm start
   git push heroku main
   ```
 
-  ## 🤝 Contributing
+## Branding Customization
+
+The logo watermarked onto GIFs and the app's colors can all be easily modified. For further instruction on customizing the app's look, read branding/README.md.
+
+## 🤝 Contributing
 
 We love contributions, small or big, from others!
 

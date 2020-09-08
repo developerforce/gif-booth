@@ -35,66 +35,66 @@
   border-radius: 50%;
   height: 36px;
   width: 36px;
-  background: #3182ce;
+  background: var(--color-primary-600);
 }
 
 .gif-button.primary:hover > .button-icon-wrapper {
-  background: #2b6cb0;
+  background: var(--color-primary-700);
 }
 
 .gif-button.primary i {
-  color: #e7f5fe;
+  color: var(--color-primary-100);
   transform: translateX(0.5px);
 }
 
 .gif-button.primary {
-  color: white;
-  background: #4299e1;
-  border-color: #3182ce;
+  color: var(--color-background);
+  background: var(--color-primary-500);
+  border-color: var(--color-primary-600);
 }
 
 .gif-button.primary:hover {
-  background: #3182ce;
+  background: var(--color-primary-600);
 }
 
 .gif-button.primary.grey {
-  background: #a0aec0;
-  border-color: #718096;
+  background: var(--color-secondary-500);
+  border-color: var(--color-secondary-600);
 }
 
 .gif-button.primary.grey:hover {
-  background: #718096;
+  background: var(--color-secondary-600);
 }
 
 .gif-button.primary.grey > .button-icon-wrapper {
-  background: #718096;
+  background: var(--color-secondary-600);
 }
 
 .gif-button.primary.grey:hover > .button-icon-wrapper {
-  background: #4a5568;
+  background: var(--color-secondary-700);
 }
 
 .gif-button.primary.red {
-  background: #f56565;
-  border-color: #e53e3e;
+  background: var(--color-error-500);
+  border-color: var(--color-error-600);
 }
 
 .gif-button.primary.red:hover {
-  background: #e53e3e;
+  background: var(--color-error-600);
 }
 
 .gif-button.primary.red > .button-icon-wrapper {
-  background: #e53e3e;
+  background: var(--color-error-600);
 }
 
 .gif-button.primary.red:hover > .button-icon-wrapper {
-  background: #c53030;
+  background: var(--color-error-700);
 }
 
 .gif-button.secondary {
   background: transparent;
-  color: #3182ce;
-  border-color: #3182ce;
+  color: var(--color-primary-600);
+  border-color: var(--color-primary-600);
   padding: 12px 24px;
 }
 
@@ -103,26 +103,26 @@
 }
 
 .gif-button.secondary:hover {
-  color: #2c5282;
-  border-color: #2c5282;
+  color: var(--color-primary-800);
+  border-color: var(--color-primary-800);
 }
 
 .gif-button.secondary.grey {
-  color: #718096;
-  border-color: #a0aec0;
+  color: var(--color-secondary-600);
+  border-color: var(--color-secondary-500);
 }
 
 .gif-button.secondary.grey:hover {
-  color: #4a5568;
-  border-color: #4a5568;
+  color: var(--color-secondary-700);
+  border-color: var(--color-secondary-700);
 }
 
 .gif-button.secondary.red {
-  color: #e53e3e;
-  border-color: #f56565;
+  color: var(--color-error-600);
+  border-color: var(--color-error-500);
 }
 
 .gif-button.secondary.red:hover {
-  color: #c53030;
-  border-color: #c53030;
+  color: var(--color-error-700);
+  border-color: var(--color-error-700);
 }
