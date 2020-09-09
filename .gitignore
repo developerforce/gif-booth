@@ -9,3 +9,5 @@ temp/*
 !temp/.gitkeep
 # ignore files in folder
 uploads/*
+# except
+!uploads/README.md
