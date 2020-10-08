@@ -3,7 +3,11 @@
 [![All Contributors](https://img.shields.io/badge/all_contributors-5-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-Add animated GIFs and Family Photo to your virtual events!
+Add animated GIFs and a Family Photo to your virtual events! Let your audience show their faces in a fun and memorable way. 
+
+![Screenshot of the App](https://github.com/fostive/gif-booth/blob/dp/readme/app-screenshot.png?raw=true)
+
+Brought to you with 💛 by [Fostive](https://github.com/fostive/).
 
 ## Installation
 
@@ -78,9 +82,29 @@ npm start
   git push heroku main
   ```
 
-## Branding Customization
+## 🎨 Customization
 
-The logo watermarked onto GIFs and the app's colors can all be easily modified. For further instruction on customizing the app's look, read branding/README.md.
+The logo watermarked onto GIFs and the app's colors can all be easily modified. 
+
+### Logos
+
+**Logo.png** `branding/Logo.png`
+
+*used at the base of the group photo*
+  - 80px height
+
+**LogoCompact.png** `branding/LogoCompact.png`
+
+*used top left of the greeting gif*
+  - 80px height, width, or both
+
+
+### Colors
+
+Edit app colors in **branding.css**  `client/src/branding.css`
+  - uses css variables
+
+
 
 ## 🤝 Contributing
 
