@@ -34,6 +34,7 @@ const WebcamStreamCapture = ({
   onCaptureReady,
   onError,
   onStopCapture,
+  cameraInput,
 }) => {
   const webcamRef = useRef(null)
   const mediaRecorderRef = useRef(null)
@@ -61,7 +62,6 @@ const WebcamStreamCapture = ({
 
   const prepareMediaRecorder = async () => {
     const constraints = getConstraints()
-
     stream = await navigator.mediaDevices.getUserMedia(constraints)
     mediaRecorderRef.current = new MediaRecorder(webcamRef.current.stream, {
       mimeType: 'video/webm',
@@ -90,7 +90,10 @@ const WebcamStreamCapture = ({
 
   return (
     <Webcam
-      videoConstraints={{ aspectRatio: getAspectRatio() }}
+      videoConstraints={{
+        aspectRatio: getAspectRatio(),
+        deviceId: cameraInput.value.deviceId,
+      }}
       className={className}
       audio={false}
       ref={webcamRef}
