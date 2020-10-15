@@ -4,7 +4,7 @@
 }
 
 .gif-warning > h1 {
-  color: #616f84;
+  color: var(--color-secondary-600);
   font-size: 18px;
 }
 
@@ -13,7 +13,7 @@
 }
 
 .gif-warning > i {
-  color: #cbd5e0;
+  color: var(--color-secondary-400);
 }
 
 .gif-warning > p {

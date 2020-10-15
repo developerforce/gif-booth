@@ -54,7 +54,7 @@ h1 > h2 {
 }
 
 .gif-card-image {
-  background: #edf2f7;
+  background: var(--color-secondary-100);
   background-size: cover;
   background-position: center;
   border-radius: 12px;

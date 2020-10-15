@@ -2,7 +2,7 @@
   position: relative;
   height: 6px;
   border-radius: 6px;
-  background: #edf2f7;
+  background: var(--color-secondary-200);
 }
 
 @keyframes stretch {
@@ -25,11 +25,11 @@
   top: 0;
   height: 100%;
   width: 0;
-  background: #a0aec0;
+  background: var(--color-secondary-500);
   transition: width 3s linear;
   border-radius: inherit;
 }
 
 .gif-countdown.danger::after {
-  background: #f49494;
+  background: var( --color-error-300);
 }
