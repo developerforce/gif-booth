@@ -1,6 +1,6 @@
 # GIF Booth
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-6-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-7-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 Add animated GIFs and a Family Photo to your virtual events! Let your audience show their faces in a fun and memorable way. 
@@ -126,6 +126,7 @@ Thanks goes to these wonderful ✨ people ([emoji key](https://allcontributors.o
     <td align="center"><a href="https://github.com/justjenu"><img src="https://avatars0.githubusercontent.com/u/12837239?v=4" width="100px;" alt=""/><br /><sub><b>Jennifer Hooper</b></sub></a><br /><a href="#userTesting-justjenu" title="User Testing">📓</a></td>
     <td align="center"><a href="https://github.com/gisete"><img src="https://avatars2.githubusercontent.com/u/10730651?v=4" width="100px;" alt=""/><br /><sub><b>Gisete Kindahl</b></sub></a><br /><a href="#design-gisete" title="Design">🎨</a> <a href="https://github.com/fostive/gif-booth/commits?author=gisete" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/DianaPerkinsDesign"><img src="https://avatars0.githubusercontent.com/u/3477197?v=4" width="100px;" alt=""/><br /><sub><b>Diana Perkins</b></sub></a><br /><a href="#design-DianaPerkinsDesign" title="Design">🎨</a> <a href="https://github.com/fostive/gif-booth/commits?author=DianaPerkinsDesign" title="Code">💻</a> <a href="https://github.com/fostive/gif-booth/commits?author=DianaPerkinsDesign" title="Documentation">📖</a></td>
+    <td align="center"><a href="http://vishalol.co"><img src="https://avatars1.githubusercontent.com/u/24241258?v=4" width="100px;" alt=""/><br /><sub><b>Vishal Sharma</b></sub></a><br /><a href="https://github.com/fostive/gif-booth/commits?author=VishalCR7" title="Code">💻</a></td>
   </tr>
 </table>
 
