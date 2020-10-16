@@ -16,6 +16,7 @@ Brought to you with 💛 by [Fostive](https://github.com/fostive/).
 ``` bash
 cd client/
 npm install
+npm run build
 ```
 
 ### Server
