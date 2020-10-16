@@ -36,7 +36,6 @@ If you are using your own S3 instance please provide the following configuration
 * `AWS_REGION`
 * `AWS_SECRET_ACCESS_KEY`
 * `AWS_BUCKET_NAME`
-* `AWS_BUCKET_URL`
 
 #### ffmpeg
 

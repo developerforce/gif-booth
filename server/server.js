@@ -10,7 +10,8 @@ const AWS = require('aws-sdk')
 const config = require('../config')
 const { createGroupPhotoStream } = require('./utils/group-photo')
 
-const makeFileLocation = (file) => `${config.AWS_BUCKET_URL}/${file.Key}`
+const makeFileLocation = (file) =>
+  `https://${config.AWS_BUCKET_NAME}.s3.amazonaws.com/${file.Key}`
 
 const s3 = new AWS.S3({
   accessKeyId: config.AWS_ACCESS_KEY_ID,
