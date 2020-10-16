@@ -69,6 +69,15 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "VishalCR7",
+      "name": "Vishal Sharma",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/24241258?v=4",
+      "profile": "http://vishalol.co",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
