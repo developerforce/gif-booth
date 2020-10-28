@@ -11,6 +11,7 @@ const Page = ({ className, children, header, headerClassName }) => (
     </div>
     <footer className="row">
       <img alt="fostive logo" src={logoSrc} />
+      <p>Brought to you with 💛 &nbsp;by <a href="https://github.com/fostive">Fostive</a></p>
     </footer>
   </>
 )
