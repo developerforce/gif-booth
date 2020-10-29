@@ -5,7 +5,7 @@
 
 Add animated GIFs and a Family Photo to your virtual events! Let your audience show their faces in a fun and memorable way. 
 
-![Screenshot of the App](https://github.com/fostive/gif-booth/blob/dp/readme/app-screenshot.png?raw=true)
+![Screenshot of the App](https://github.com/fostive/gif-booth/blob/staged/app-screenshot.png?raw=true)
 
 Brought to you with 💛 by [Fostive](https://github.com/fostive/).
 
