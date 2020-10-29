@@ -23,6 +23,16 @@ footer {
   height: 94px;
   background: var(--color-secondary-200);
   padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+}
+
+footer a {
+  color: var(--color-primary-700);
+}
+
+footer p {
+  padding-left: 20px;
 }
 
 @media (min-width: 560px) {
