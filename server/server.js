@@ -189,7 +189,7 @@ app.post('/video2gif', upload.none(), ({ body }, res) => {
       res.send(body)
     })
     .on('error', (err) => {
-      console.log(`An error happened: ${err.message}`)
+      console.log(`The following error occured: ${err.message}`)
       res.send(err)
     })
     .save(`temp/${videoId}.gif`)
