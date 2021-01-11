@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react'
 import download from 'downloadjs'
 import { Link } from 'react-router-dom'
 import './Create.css'
+import AsyncSelect from 'react-select/lib/Async'
 import Webcam from '../../components/WebcamCapture'
 import Countdown from '../../components/Countdown'
 import Page from '../../components/Page'
@@ -9,6 +10,7 @@ import Icon from '../../components/Icon'
 import Button from '../../components/Button'
 import GenericWarning from './GenericWarning'
 import BrowserWarning from './BrowserWarning'
+import noCameraImgSrc from '../../no_camera.png'
 
 const WARNING_BROWSER = 'warning_browser'
 const WARNING_GENERIC = 'warning_generic'
@@ -21,6 +23,7 @@ const PHASE_END = 'phase_end'
 
 function Create({ history }) {
   const [phase, setPhase] = useState(PHASE_START)
+  const [recodingInput, setRecordingInput] = useState(null)
   const [isWebcamReady, setIsWebcamReady] = useState(false)
   const [gifId, setGifId] = useState()
   const [text, setText] = useState('')
@@ -29,6 +32,28 @@ function Create({ history }) {
   const [warning, setWarning] = useState(
     window.MediaRecorder ? false : WARNING_BROWSER,
   )
+
+  const cameraOptions = () =>
+    navigator.mediaDevices
+      .enumerateDevices()
+      .then((inputs) => {
+        const options = []
+        inputs
+          .filter((input) => {
+            return input.kind === 'videoinput'
+          })
+          .forEach((videoInput) => {
+            options.push({
+              value: videoInput,
+              label: videoInput.label,
+            })
+          })
+        return options
+      })
+      .catch((err) => {
+        console.error('ERROR: No camera input found', err)
+        return []
+      })
 
   const retry = () => {
     setGifId(null)
@@ -127,6 +152,19 @@ function Create({ history }) {
     [WARNING_GENERIC]: <GenericWarning retry={retry} />,
     [WARNING_BROWSER]: <BrowserWarning />,
   }
+  const webCamCompo = recodingInput ? (
+    <Webcam
+      className="gif-video"
+      onError={() => setWarning(WARNING_GENERIC)}
+      onCaptureReady={() => setIsWebcamReady(true)}
+      recordingInput={recodingInput}
+      onStopCapture={onStopCapture}
+      isPlaying={phase === PHASE_RECORDING}
+      cameraInput={recodingInput}
+    />
+  ) : (
+    <img className="gif-video" src={noCameraImgSrc} alt="" />
+  )
 
   return (
     <Page
@@ -146,14 +184,20 @@ function Create({ history }) {
                 alt="Your GIF"
               />
             ) : (
-              <Webcam
-                className="gif-video"
-                onError={() => setWarning(WARNING_GENERIC)}
-                onCaptureReady={() => setIsWebcamReady(true)}
-                onStopCapture={onStopCapture}
-                isPlaying={phase === PHASE_RECORDING}
-              />
+              webCamCompo
             )}
+          </div>
+          <div className="container">
+            <AsyncSelect
+              cacheOptions
+              defaultOptions
+              placeholder="Select your camera..."
+              onChange={setRecordingInput}
+              noOptionsMessage={() => {
+                return 'No camera detected...'
+              }}
+              loadOptions={cameraOptions}
+            />
           </div>
           {isPrerecordingPhase && (
             <Countdown
