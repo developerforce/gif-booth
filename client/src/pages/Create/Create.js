@@ -27,6 +27,7 @@ function Create({ history }) {
   const [isWebcamReady, setIsWebcamReady] = useState(false)
   const [gifId, setGifId] = useState()
   const [text, setText] = useState('')
+  const [textLimitError, setTextLimitError] = useState('')
   const [isProcessingGif, setIsProcessingGif] = useState('')
   const [isUploading, setUploading] = useState(false)
   const [warning, setWarning] = useState(
@@ -135,6 +136,15 @@ function Create({ history }) {
     download(fileBlob, `${gifId}.gif`)
   }
 
+  const handleText = (input) => {
+    if (input.length === 30) {
+      setTextLimitError('Caption must have a maximum limit of 30 characters.')
+    } else {
+      setText(input)
+      setTextLimitError('')
+    }
+  }
+
   const header = (
     <>
       <h1>Create Your Own GIF</h1>
@@ -224,9 +234,12 @@ function Create({ history }) {
           )}
           {phase === PHASE_TEXT && (
             <>
+              {textLimitError && (
+                <p className="text-limit-error">{textLimitError}</p>
+              )}
               <textarea
-                placeholder="Add a caption to your GIF!"
-                onChange={(e) => setText(e.target.value)}
+                placeholder="Add a caption to your GIF! (maximum 30 characters)"
+                onChange={(e) => handleText(e.target.value)}
                 value={text}
               />
               <div className="gif-button-group">

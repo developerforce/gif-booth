@@ -45,6 +45,10 @@ textarea::placeholder {
   transition: color 150ms ease-in-out;
 }
 
+.text-limit-error {
+  color: var(--color-error-500)
+}
+
 @media (min-width: 560px) {
   .gif-video {
     height: 288px;
