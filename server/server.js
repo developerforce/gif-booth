@@ -180,6 +180,7 @@ app.post('/uploadGIF', ({ body }, res) => {
   })
 })
 
+/* eslint-disable */
 app.post('/video2gif', upload.none(), ({ body }, res) => {
   const { videoId, text, fontsize } = body
   ffmpeg()
@@ -192,7 +193,11 @@ app.post('/video2gif', upload.none(), ({ body }, res) => {
       {
         filter: 'drawtext',
         options: {
-          text: text.replace(/\r?\n|\r/gm, '\v'),
+          text: text
+            .replaceAll('\\\\', '\\\\\\\\\\\\\\\\')
+            .replaceAll("'", "'\\\\\\\\\\\\''")
+            .replaceAll('%', '\\\\\\\\\\\\%')
+            .replaceAll(':', '\\\\\\\\\\\\:'),
           fontsize,
           fontcolor: 'white',
           x: '(w-text_w)/2',
