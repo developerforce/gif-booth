@@ -1,0 +1,29 @@
+.gif-card-image {
+    background: var(--color-secondary-100);
+    background-size: cover;
+    background-position: center;
+    border-radius: 12px;
+    padding-bottom: 75%;
+    object-fit: cover;
+    cursor: pointer;
+    z-index: 0;
+}
+
+.modal-top {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+i {
+    margin-left: 10px;
+}
+
+@media (min-width: 560px) {
+    .vl {
+        display: inline;
+        border-left: 1px solid var(--color-secondary-600);
+        margin: 0 10px;
+    }
+}
+

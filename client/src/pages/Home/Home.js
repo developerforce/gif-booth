@@ -3,10 +3,10 @@ import { Link } from 'react-router-dom'
 import './Home.css'
 import ReactPaginate from 'react-paginate'
 import useListGIFs from '../../hooks/useListGIFs'
-import { downloadFromS3 } from '../../utils/download'
 import Button from '../../components/Button'
 import Icon from '../../components/Icon'
 import Page from '../../components/Page'
+import GifList from '../../components/GifList'
 
 const Home = () => {
   const {
@@ -62,23 +62,7 @@ const Home = () => {
             <Button icon="plus">Create Your Own GIF</Button>
           </Link>
         </div>
-        {gifs.map(({ Key, Location }) => (
-          // disabling this line as this will be changed into a modal with proper usage of buttons for click handling anyways
-          // eslint-disable-next-line
-          <div
-            onClick={() => downloadFromS3(Key)}
-            key={Key}
-            alt={`GIF ${Key}`}
-            className="gif-card-image"
-            style={
-              isLoading
-                ? null
-                : {
-                    backgroundImage: `url("${Location}")`,
-                  }
-            }
-          />
-        ))}
+        <GifList gifs={gifs} isLoading={isLoading} />
       </div>
     </Page>
   )
