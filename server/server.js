@@ -30,6 +30,9 @@ app.set('port', process.env.PORT || 3001)
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 
+// Clients for SSE
+let clients = []
+
 const storage = multer.diskStorage({
   destination(req, file, cb) {
     cb(null, './uploads/')
@@ -78,6 +81,12 @@ const listGifs = async () => {
   return OrderedContents
 }
 
+function sendEventsToAll(event) {
+  clients.forEach((client) => {
+    client.res.write(`data: ${JSON.stringify(event)}\n\n`)
+  })
+}
+
 app.get('/listGifs', async (_, res) => {
   try {
     const result = await listGifs()
@@ -85,6 +94,33 @@ app.get('/listGifs', async (_, res) => {
   } catch (e) {
     console.log(e)
   }
+})
+
+app.get('/events', (req, res) => {
+  res.set({
+    'Content-Type': 'text/event-stream',
+    'Cache-Control': 'no-cache',
+    Connection: 'keep-alive',
+
+    // enabling CORS
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers':
+      'Origin, X-Requested-With, Content-Type, Accept',
+  })
+
+  res.write(`data: ${JSON.stringify('listening for events...')}\n\n`)
+
+  const clientId = Date.now()
+  const newClient = {
+    id: clientId,
+    res,
+  }
+
+  clients.push(newClient)
+
+  req.on('close', () => {
+    clients = clients.filter((client) => client.id !== clientId)
+  })
 })
 
 const groupPhotoPath = 'public/group_photo.jpeg'
@@ -174,6 +210,7 @@ app.post('/uploadUserGIF', upload.single('gif'), async (req, res) => {
 app.post('/uploadGIF', ({ body }, res) => {
   const { filename } = body
   uploadGIF(res, filename, 'temp', () => {
+    sendEventsToAll('new gif')
     fs.unlink(`uploads/${filename}.webm`, () =>
       console.log('.webm file was deleted'),
     )

@@ -9,6 +9,7 @@ export default function useListGIFs() {
   const [isLoading, setIsLoading] = useState(true)
   const [data, setData] = useState([])
   const [page, setPageState] = useState(0)
+  const [listening, setListening] = useState(false)
 
   const gifCount = data.length
   const pageCount = Math.ceil(gifCount / itemsPerPage)
@@ -48,6 +49,19 @@ export default function useListGIFs() {
       cancelLoadingTimeout()
     }
   }, [])
+
+  useEffect(() => {
+    if (!listening) {
+      const eventSource = new EventSource('http://localhost:3001/events')
+      eventSource.onmessage = (e) => {
+        if (JSON.parse(e.data) === 'new gif') {
+          listGifs()
+        }
+      }
+
+      setListening(true)
+    }
+  }, [listening, data])
 
   return {
     page,
