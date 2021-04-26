@@ -25,12 +25,16 @@ const GifItem = ({ isLoading, Location, fileKey }) => {
   useEffect(() => {
     const params = new URLSearchParams(location.search)
     const regex = /\b(\d.*[^.gif])\b/g
-    setGifId(fileKey.match(regex)[0])
+    const match = fileKey.match(regex)
+
+    if (match) {
+      setGifId(match[0])
+    }
 
     if (params.get('gif_id') === gifId) {
       setModalOpen(true)
     }
-  }, [gifId])
+  }, [gifId, fileKey, location.search])
 
   const handleGifSelect = () => {
     const params = new URLSearchParams()
@@ -49,7 +53,7 @@ const GifItem = ({ isLoading, Location, fileKey }) => {
 
   const handleDownload = () => {
     downloadFromS3(fileKey).then(() => {
-      notyf.success('File successfully downloading')
+      notyf.success('File downloading...')
     })
   }
 
