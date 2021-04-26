@@ -40,7 +40,6 @@ h1 > h2 {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 10;
   pointer-events: none;
 }
 
@@ -51,17 +50,6 @@ h1 > h2 {
 .gif-home-createnew button {
   width: 300px;
   max-width: calc(100vw - 32px);
-}
-
-.gif-card-image {
-  background: var(--color-secondary-100);
-  background-size: cover;
-  background-position: center;
-  border-radius: 12px;
-  padding-bottom: 75%;
-  object-fit: cover;
-  cursor: pointer;
-  z-index: 0;
 }
 
 .gif-cards-container {
