@@ -180,7 +180,6 @@ app.post('/uploadGIF', ({ body }, res) => {
   })
 })
 
-/* eslint-disable */
 app.post('/video2gif', upload.none(), ({ body }, res) => {
   const { videoId, text, fontsize } = body
   ffmpeg()
