@@ -118,13 +118,7 @@ app.get('/events', (req, res) => {
 
   clients.push(newClient)
 
-  // Uncomment to see connections opened
-  // console.log(`${clientId} Connection opened`);
-
   req.on('close', () => {
-    // Uncomment to see connections closed
-    // console.log(`${clientId} Connection closed`)
-
     clients = clients.filter((client) => client.id !== clientId)
   })
 })
