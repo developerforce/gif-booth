@@ -53,9 +53,9 @@ const WebcamStreamCapture = ({
     ({ data }) => {
       if (!data || data.size === 0) return
       const blob = new Blob([data], {
-        type: MediaRecorder.isTypeSupported('video/mp4')
-          ? 'video/mp4'
-          : 'video/webm',
+        type: MediaRecorder.isTypeSupported('video/webm')
+          ? 'video/webm'
+          : 'video/mp4',
       })
       onStopCapture(blob)
     },
@@ -66,9 +66,9 @@ const WebcamStreamCapture = ({
     const constraints = getConstraints()
     stream = await navigator.mediaDevices.getUserMedia(constraints)
     mediaRecorderRef.current = new MediaRecorder(webcamRef.current.stream, {
-      mimeType: MediaRecorder.isTypeSupported('video/mp4')
-        ? 'video/mp4'
-        : 'video/webm',
+      mimeType: MediaRecorder.isTypeSupported('video/webm')
+        ? 'video/webm'
+        : 'video/mp4',
     })
     mediaRecorderRef.current.addEventListener('dataavailable', onDataAvailable)
     onCaptureReady()
